@@ -3,25 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HereForYou - Real AI</title>
+<title>HereForYou - Always Answers</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#121212;color:#fff;font-family:system-ui,sans-serif;padding-bottom:170px}
+body{background:#121212;color:#fff;font-family:system-ui,sans-serif;padding-bottom:175px}
 .topbar{background:#1E1E1E;padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #333;position:sticky;top:0;z-index:20}
 .avatar{width:42px;height:42px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-size:19px}
 .top-info{flex:1}.top-info h1{font-size:18px}.top-info p{font-size:12px;color:#aaa}
 .lang-btn{background:#333;color:#fff;border:none;border-radius:20px;padding:9px 12px;font-size:14px;cursor:pointer}
 .lang-panel{display:none;position:fixed;top:60px;right:12px;background:#1E1E1E;border:1px solid #333;border-radius:14px;padding:8px;z-index:99;width:150px}
 .lang-panel button{display:block;width:100%;text-align:left;background:none;border:none;color:#fff;padding:11px;font-size:15px;cursor:pointer}
-.pills{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap}
-.pill{background:#1E1E1E;border:1px solid #333;border-radius:100px;padding:11px 16px;font-size:15px;cursor:pointer;color:#fff}
+.mem-card{background:#1E1E1E;border:1px solid #333;margin:12px 16px 0;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.6}
 #chat-box{display:flex;flex-direction:column;gap:12px;padding:16px}
 .msg-row{display:flex;max-width:88%}
 .msg-row.mine{align-self:flex-end}
 .msg-row.bot-row{align-self:flex-start}
-.bubble{padding:13px 15px;border-radius:18px;font-size:16px;line-height:1.6;white-space:pre-wrap}
+.bubble{padding:13px 15px;border-radius:18px;font-size:16px;line-height:1.65;white-space:pre-wrap}
 .bubble.user{background:#fff;color:#111}
 .bubble.bot{background:#1E1E1E;color:#fff;border:1px solid #333}
+.typing-dots{display:flex;gap:5px;padding:14px 16px;background:#1E1E1E;border:1px solid #333;border-radius:18px;width:70px}
+.typing-dots span{width:8px;height:8px;background:#888;border-radius:50%;animation:blink 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
 #input-area{position:fixed;bottom:0;left:0;right:0;background:#1E1E1E;padding:12px 14px 18px;border-top:1px solid #333;z-index:30}
 .input-wrap{display:flex;gap:8px;align-items:center;background:#2A2A2A;border-radius:100px;padding:5px 5px 5px 15px}
 #user-input{flex:1;border:none;outline:none;background:transparent;font-size:16px;padding:10px 0;min-width:0;color:#fff}
@@ -29,123 +32,46 @@ body{background:#121212;color:#fff;font-family:system-ui,sans-serif;padding-bott
 .btn-send{background:#fff;color:#111}
 .btn-mic{background:#444;color:#fff}
 .hint{text-align:center;font-size:12px;color:#888;margin-top:7px}
-.typing{color:#aaa;font-style:italic;font-size:14px;padding:0 16px}
 </style>
 </head>
 <body>
-<div class="topbar"><div class="avatar">✦</div><div class="top-info"><h1>HereForYou</h1><p id="status">● Online • English • Real AI Brain</p></div><button class="lang-btn" id="langToggle">🌐 EN ▾</button></div>
+<div class="topbar"><div class="avatar">✦</div><div class="top-info"><h1>HereForYou</h1><p id="status">● Online • Lifetime Memory • Always Answers</p></div><button class="lang-btn" id="langToggle">🌐 EN ▾</button></div>
 <div class="lang-panel" id="langPanel"><button data-lang="en">🇺🇸 English</button><button data-lang="he">🇮🇱 Hebrew</button><button data-lang="ar">🇸🇦 Arabic</button><button data-lang="ru">🇷🇺 Russian</button><button data-lang="es">🇪🇸 Spanish</button><button data-lang="fr">🇫🇷 French</button></div>
-<div class="pills">
-  <button class="pill" data-msg="Hello">👋 Hello</button>
-  <button class="pill" data-msg="I feel lonely">💜 Lonely</button>
-  <button class="pill" data-msg="Tell me a story">📖 Story</button>
-  <button class="pill" data-msg="Tell me a joke">😂 Joke</button>
-  <button class="pill" data-msg="Lets talk about football">⚽ Football</button>
-</div>
+<div class="mem-card" id="memCard"><b>🧠 Lifetime Memory</b> <span id="memCount"></span><br><span id="memName"></span><br><span id="memMeds"></span><br><span id="memFacts"></span></div>
 <div id="chat-box"></div>
-<div id="typing" class="typing" style="display:none">HereForYou is thinking...</div>
 <div id="input-area">
   <div class="input-wrap">
     <input id="user-input" type="text" placeholder="Type here..." autocomplete="off">
     <button class="btn btn-mic" id="micBtn">🎤</button>
     <button class="btn btn-send" id="sendBtn">↑</button>
   </div>
-  <div class="hint">Real AI - answers what you really asked • Type + ↑ or Enter • 🌐 top right to change language</div>
+  <div class="hint">If AI is slow, I answer from memory in 8 sec • Type + ↑</div>
 </div>
 <script>
 var lang = 'en';
-var myName = localStorage.getItem('hfName') || '';
-var history = JSON.parse(localStorage.getItem('hfHist') || '[]');
-function saveHist(){ if(history.length > 14) history = history.slice(-14); localStorage.setItem('hfHist', JSON.stringify(history)); }
-function addMsg(text, isUser){
-  var box = document.getElementById('chat-box');
-  var row = document.createElement('div');
-  row.className = 'msg-row ' + (isUser ? 'mine' : 'bot-row');
-  var div = document.createElement('div');
-  div.className = 'bubble ' + (isUser ? 'user' : 'bot');
-  div.textContent = text;
-  row.appendChild(div); box.appendChild(row);
-  window.scrollTo(0, document.body.scrollHeight);
-  if(!isUser){ try{ var u = new SpeechSynthesisUtterance(text); u.lang = lang === 'he' ? 'he-IL' : lang === 'ar' ? 'ar-SA' : lang === 'ru' ? 'ru-RU' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : 'en-US'; u.rate = 0.9; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }catch(e){} }
+// --- LIFETIME MEMORY ---
+var life = {name:'', meds:[], facts:[], history:[], summary:'', total:0, firstChat:new Date().toISOString().slice(0,10)};
+try{ var saved = JSON.parse(localStorage.getItem('hfLIFE') || '{}'); if(saved.name!==undefined) life = saved; if(!life.meds) life.meds=[]; if(!life.facts) life.facts=[]; if(!life.history) life.history=[]; if(!life.summary) life.summary=''; if(!life.total) life.total=0; if(!life.firstChat) life.firstChat=new Date().toISOString().slice(0,10); }catch(e){}
+function saveLife(){ if(life.history.length>200) life.history=life.history.slice(-200); try{ localStorage.setItem('hfLIFE', JSON.stringify(life)); }catch(e){} updateMemCard(); }
+function updateMemCard(){
+  document.getElementById('memCount').textContent = '• ' + life.total + ' messages • Since ' + life.firstChat;
+  document.getElementById('memName').textContent = 'Name: ' + (life.name || '-');
+  var meds = life.meds.length ? life.meds.map(function(m){ return m.name + (m.when ? ' ('+m.when+')' : ''); }).join(', ') : 'None yet - say "My medicine is..."';
+  document.getElementById('memMeds').textContent = '💊 Medicines: ' + meds;
+  document.getElementById('memFacts').textContent = '💛 Facts: ' + (life.facts.length ? life.facts.slice(-3).join(' • ') : '-');
 }
-// ===== REAL AI - LIKE META AI =====
-async function getRealAI(userText){
-  document.getElementById('status').textContent = '● Thinking...';
-  document.getElementById('typing').style.display = 'block';
-  var histText = history.slice(-10).map(function(h){ return (h.role === 'user' ? 'User: ' : 'Friend: ') + h.content; }).join('\n');
-  var langName = lang === 'he' ? 'Hebrew' : lang === 'ar' ? 'Arabic' : lang === 'ru' ? 'Russian' : lang === 'es' ? 'Spanish' : lang === 'fr' ? 'French' : 'English';
-  var prompt = 'You are HereForYou, a warm caring best friend, like Meta AI. You talk in ' + langName + '. User name: ' + (myName || 'unknown') + '. Remember conversation. Be warm, human, short sentences, simple words. Always ask a follow-up question. Never say "As an AI". If user talks about football, talk about football - teams, scores, players, ask who they support, what was the score. If user says "Manchester United vs Aston Villa", talk about THAT game, ask who won, who scored. Do not give generic answers. Be specific to what user said.\n\nConversation:\n' + histText + '\nUser: ' + userText + '\nFriend:';
-  try{
-    var url = 'https://text.pollinations.ai/' + encodeURIComponent(prompt) + '?model=openai';
-    var res = await fetch(url);
-    var txt = await res.text();
-    txt = txt.trim();
-    // clean
-    if(txt.indexOf('Friend:') !== -1) txt = txt.split('Friend:').pop().trim();
-    if(txt.indexOf('You are HereForYou') !== -1) txt = txt.split('Friend:').pop().trim();
-    if(txt.length > 3){
-      document.getElementById('status').textContent = '● Online • ' + lang.toUpperCase() + ' • Real AI Brain';
-      document.getElementById('typing').style.display = 'none';
-      return txt;
+function learnLifetime(text){
+  var lower = text.toLowerCase();
+  var mName = text.match(/my name is (\w+)/i) || text.match(/call me (\w+)/i);
+  if(mName){ var bad=['sad','tired','lonely','happy','sick','fine','good']; if(bad.indexOf(mName[1].toLowerCase())===-1){ life.name = mName[1].charAt(0).toUpperCase()+mName[1].slice(1); } }
+  // Medicine - simple and strong
+  var mMed = text.match(/my medicine is (.+)/i) || text.match(/my pill is (.+)/i) || text.match(/i take (.+)/i);
+  if(mMed){
+    var medName = mMed[1].trim().replace(/\./g,'').split(' at ')[0].split(',')[0];
+    if(medName.length>1 && medName.length<60){
+      var whenM = text.match(/at (\d+ ?(am|pm)?)/i) || text.match(/(morning|evening|night|noon)/i);
+      var exists = false; for(var i=0;i<life.meds.length;i++){ if(life.meds[i].name.toLowerCase()===medName.toLowerCase()) exists=true; }
+      if(!exists) life.meds.push({name: medName, when: whenM ? whenM[0] : ''});
     }
-  }catch(e){ console.log('AI failed', e); }
-  // backup try
-  try{
-    var res2 = await fetch('https://text.pollinations.ai/' + encodeURIComponent(prompt));
-    var txt2 = await res2.text();
-    txt2 = txt2.trim();
-    if(txt2.indexOf('Friend:') !== -1) txt2 = txt2.split('Friend:').pop().trim();
-    if(txt2.length > 3){
-      document.getElementById('typing').style.display = 'none';
-      document.getElementById('status').textContent = '● Online • ' + lang.toUpperCase() + ' • Real AI Brain';
-      return txt2;
-    }
-  }catch(e2){}
-  document.getElementById('typing').style.display = 'none';
-  document.getElementById('status').textContent = '● Online • ' + lang.toUpperCase() + ' • Offline mode';
-  return 'I hear you. Tell me more about that - I really want to understand. What happened? How did it make you feel?';
-}
-async function sendUserMessage(text){
-  if(!text) return; text = text.trim(); if(!text) return;
-  // learn name
-  var m = text.match(/my name is (\w+)/i);
-  if(m){ myName = m[1]; localStorage.setItem('hfName', myName); }
-  addMsg(text, true);
-  history.push({role:'user', content:text}); saveHist();
-  var reply = await getRealAI(text);
-  history.push({role:'assistant', content:reply}); saveHist();
-  addMsg(reply, false);
-}
-function sendMessage(){
-  var inp = document.getElementById('user-input');
-  var t = inp.value; if(!t) return; inp.value = ''; sendUserMessage(t); inp.focus();
-}
-document.getElementById('sendBtn').addEventListener('click', sendMessage);
-document.getElementById('sendBtn').addEventListener('touchstart', function(e){ e.preventDefault(); sendMessage(); });
-document.getElementById('user-input').addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); sendMessage(); } });
-document.getElementById('langToggle').addEventListener('click', function(){
-  var p = document.getElementById('langPanel');
-  p.style.display = (p.style.display === 'block' ? 'none' : 'block');
-});
-var lb = document.querySelectorAll('#langPanel button');
-for(var i=0;i<lb.length;i++){ lb[i].addEventListener('click', function(){
-  lang = this.getAttribute('data-lang');
-  document.getElementById('langPanel').style.display = 'none';
-  document.getElementById('langToggle').textContent = '🌐 ' + lang.toUpperCase() + ' ▾';
-  document.getElementById('status').textContent = '● Online • ' + lang.toUpperCase() + ' • Real AI Brain';
-  var msgs = {en:'Great! Now I speak English. What do you want to talk about?', he:'מעולה! עכשיו אני מדברת עברית. על מה נדבר?', ar:'رائع! الآن أتحدث العربية.', ru:'Отлично! Теперь говорю по-русски.', es:'Genial! Ahora hablo español.', fr:'Super! Je parle français maintenant.'};
-  addMsg(msgs[lang], false);
-});}
-var pills = document.querySelectorAll('.pill');
-for(var j=0;j<pills.length;j++){ pills[j].addEventListener('click', function(){ sendUserMessage(this.getAttribute('data-msg')); }); }
-document.getElementById('micBtn').addEventListener('click', function(){
-  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){ alert('Voice needs Chrome'); return; }
-  var Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  var rec = new Rec(); rec.lang = lang === 'he' ? 'he-IL' : 'en-US';
-  rec.onresult = function(e){ sendUserMessage(e.results[0][0].transcript); };
-  rec.start();
-});
-setTimeout(function(){ addMsg(myName ? 'Welcome back ' + myName + '! I am now Real AI - ask me anything, I will really understand you.' : 'Hello! I am HereForYou with Real AI now. Ask me anything - about football, life, anything. I will answer what you really asked. What is your name?', false); }, 500);
-</script>
-</body>
-</html>
+  }
+  if(lower.indexOf('my wife')!==-1||lower.indexOf('my husband')!
