@@ -6,224 +6,82 @@
 <title>HereForYou</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#F8F6F3;color:#111;font-family:system-ui,sans-serif;padding-bottom:170px}
-.topbar{background:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E5E5E5;position:sticky;top:0;z-index:20}
-.avatar{width:42px;height:42px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px}
+body{font-family:system-ui;background:#F8F6F3;padding:20px;padding-bottom:220px}
+.topbar{background:#fff;padding:14px;display:flex;gap:10px;align-items:center;border-bottom:1px solid #E5E5E5;position:sticky;top:0;z-index:20}
+.avatar{width:42px;height:42px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center}
 .top-info{flex:1}.top-info h1{font-size:18px}.top-info p{font-size:12px;color:#888}
 .lang-btn{background:#eee;border:none;border-radius:20px;padding:9px 12px;font-size:14px;cursor:pointer}
-.lang-panel{display:none;position:fixed;top:60px;right:12px;background:#fff;border:1px solid #E5E5E5;border-radius:14px;padding:8px;z-index:50;box-shadow:0 4px 20px rgba(0,0,0,.15);width:150px}
-.lang-panel button{display:block;width:100%;text-align:left;background:none;border:none;padding:11px 10px;font-size:15px;cursor:pointer;border-radius:8px}
-.lang-panel button:active{background:#eee}
-.hero{padding:18px}
-.hero h2{font-size:26px}
-.hero p{font-size:14px;color:#666;margin-top:6px}
-.pills{display:flex;gap:8px;padding:10px 18px;flex-wrap:wrap}
+.lang-panel{display:none;position:fixed;top:60px;right:12px;background:#fff;border:1px solid #ddd;border-radius:14px;padding:8px;z-index:99;box-shadow:0 4px 20px rgba(0,0,0,.2);width:150px}
+.lang-panel button{display:block;width:100%;text-align:left;background:none;border:none;padding:11px;font-size:15px;cursor:pointer}
+.pills{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0}
 .pill{background:#fff;border:1px solid #E5E5E5;border-radius:100px;padding:11px 16px;font-size:15px;cursor:pointer}
-.pill:active{background:#111;color:#fff}
-#chat-box{display:flex;flex-direction:column;gap:12px;padding:18px}
-.msg-row{display:flex;max-width:85%}
-.msg-row.mine{align-self:flex-end}
-.msg-row.bot-row{align-self:flex-start}
-.bubble{padding:13px 15px;border-radius:18px;font-size:16px;line-height:1.6;white-space:pre-wrap}
-.bubble.user{background:#111;color:#fff}
-.bubble.bot{background:#fff;border:1px solid #EDEBE8}
-#input-area{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 14px 18px;border-top:1px solid #E5E5E5;z-index:30}
-.input-wrap{display:flex;gap:8px;align-items:center;background:#F8F6F3;border-radius:100px;padding:5px 5px 5px 15px}
-#user-input{flex:1;border:none;outline:none;background:transparent;font-size:16px;padding:10px 0;min-width:0}
-.btn{width:44px;height:44px;border-radius:50%;border:none;font-size:20px;cursor:pointer}
-.btn-send{background:#111;color:#fff}
-.btn-mic{background:#E5E5E5}
-.hint{text-align:center;font-size:12px;color:#888;margin-top:7px}
+#chat-box{display:flex;flex-direction:column;gap:10px}
+.msg{background:#fff;padding:12px 14px;border-radius:14px;font-size:16px;max-width:85%;border:1px solid #EDEBE8}
+.msg.mine{background:#111;color:#fff;align-self:flex-end}
+#debug{background:#FFF3CD;padding:10px;border-radius:10px;font-size:13px;margin:10px 0}
+#input-area{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 14px 18px;border-top:1px solid #ddd;z-index:30}
+#user-input{width:100%;border:2px solid #111;border-radius:14px;font-size:18px;padding:14px;outline:none;background:#fff}
+#bigSend{width:100%;background:#111;color:#fff;border:none;border-radius:14px;padding:16px;font-size:19px;font-weight:800;margin-top:10px;cursor:pointer}
+#bigSend:active{background:#333;transform:scale(0.98)}
+#micBig{width:100%;background:#E5E5E5;border:none;border-radius:14px;padding:12px;font-size:16px;margin-top:8px;cursor:pointer}
 </style>
 </head>
 <body>
+<div class="topbar"><div class="avatar">✦</div><div class="top-info"><h1>HereForYou</h1><p id="status">● Online • English • FIXED TEXT</p></div><button class="lang-btn" id="langToggle">🌐 EN ▾</button></div>
+<div class="lang-panel" id="langPanel"><button data-lang="en">🇺🇸 English</button><button data-lang="he">🇮🇱 Hebrew</button><button data-lang="ar">🇸🇦 Arabic</button><button data-lang="ru">🇷🇺 Russian</button><button data-lang="es">🇪🇸 Spanish</button><button data-lang="fr">🇫🇷 French</button></div>
 
-<div class="topbar">
-  <div class="avatar">✦</div>
-  <div class="top-info"><h1>HereForYou</h1><p id="status">● Online • English</p></div>
-  <button class="lang-btn" id="langToggle">🌐 EN ▾</button>
-</div>
-
-<div class="lang-panel" id="langPanel">
-  <button data-lang="en">🇺🇸 English</button>
-  <button data-lang="he">🇮🇱 Hebrew - עברית</button>
-  <button data-lang="ar">🇸🇦 Arabic - العربية</button>
-  <button data-lang="ru">🇷🇺 Russian</button>
-  <button data-lang="es">🇪🇸 Spanish</button>
-  <button data-lang="fr">🇫🇷 French</button>
-</div>
-
-<div class="hero">
-  <h2 id="welcomeTitle">Hello, I'm here.</h2>
-  <p id="welcomeText">Tap a button below - it must work now. Or type to me, or talk to me.</p>
-</div>
+<h2 style="margin-top:14px">Hello, I'm here.</h2>
+<p style="color:#666;font-size:14px;margin-top:6px">Type below and tap the BIG black SEND button. It is separate, it cannot be blocked.</p>
+<div id="debug">DEBUG: Page loaded OK. Now type something.</div>
 
 <div class="pills">
   <button class="pill" data-msg="Hello">👋 Hello</button>
   <button class="pill" data-msg="I feel lonely">💜 Lonely</button>
   <button class="pill" data-msg="Tell me a story">📖 Story</button>
   <button class="pill" data-msg="Tell me a joke">😂 Joke</button>
-  <button class="pill" data-msg="Wanna go to play ball?">⚽ Play ball</button>
-  <button class="pill" data-msg="Encourage me">💪 Encourage me</button>
-  <button class="pill" data-msg="Tell me something interesting">✨ Interesting</button>
-  <button class="pill" data-msg="Help me sleep">🌙 Sleep</button>
 </div>
-
 <div id="chat-box"></div>
 
 <div id="input-area">
-  <div class="input-wrap">
-    <input id="user-input" type="text" placeholder="Type here..." autocomplete="off">
-    <button class="btn btn-mic" id="micBtn">🎤</button>
-    <button class="btn btn-send" id="sendBtn">↑</button>
-  </div>
-  <div class="hint" id="hintText">Type + ↑ or Enter • Mic to talk • 🌐 top right to change language</div>
+  <input id="user-input" type="text" placeholder="Type hello here..." autocomplete="off">
+  <button id="bigSend">SEND ➤ TAP HERE</button>
+  <button id="micBig">🎤 Or tap to talk</button>
 </div>
 
 <script>
-var currentLang = 'en';
+var input = document.getElementById('user-input');
+var debug = document.getElementById('debug');
+var box = document.getElementById('chat-box');
+var lang = 'en';
 var myName = '';
 
-function addMessage(text, isUser){
-  var box = document.getElementById('chat-box');
-  var row = document.createElement('div');
-  row.className = 'msg-row ' + (isUser ? 'mine' : 'bot-row');
-  var div = document.createElement('div');
-  div.className = 'bubble ' + (isUser ? 'user' : 'bot');
-  div.textContent = text;
-  row.appendChild(div);
-  box.appendChild(row);
+function setDebug(t){ debug.textContent = 'DEBUG: ' + t; }
+function addMsg(text, mine){
+  var d = document.createElement('div');
+  d.className = 'msg ' + (mine ? 'mine' : '');
+  d.textContent = text;
+  box.appendChild(d);
   window.scrollTo(0, document.body.scrollHeight);
-  if(!isUser){ speak(text); }
+  if(!mine){ try{ var u = new SpeechSynthesisUtterance(text); u.lang = lang === 'he' ? 'he-IL' : 'en-US'; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }catch(e){} }
 }
-function speak(text){
-  try{
-    if('speechSynthesis' in window){
-      window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(text);
-      var map = {en:'en-US', he:'he-IL', ar:'ar-SA', ru:'ru-RU', es:'es-ES', fr:'fr-FR'};
-      u.lang = map[currentLang] || 'en-US';
-      u.rate = 0.9;
-      window.speechSynthesis.speak(u);
-    }
-  }catch(e){}
-}
-function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-
-function replyEnglish(text){
+function rand(a){ return a[Math.floor(Math.random()*a.length)]; }
+function reply(text){
   var n = myName ? ' ' + myName : '';
-  var lower = text.toLowerCase();
-  if(lower.indexOf('my name is') !== -1){
-    var parts = text.split(' ');
-    myName = parts[parts.length-1];
-    return 'Nice to meet you, ' + myName + '! What a beautiful name. How are you feeling today?';
-  }
-  if(lower.indexOf('hello') !== -1 || lower.indexOf('hi') !== -1 || lower.indexOf('hey') !== -1 || lower.indexOf('how are you') !== -1){
-    return rand(['Hello' + n + '! I am so happy you came to talk to me. I missed you. How are you feeling right now?', 'Heyy' + n + '! Welcome back! I was waiting for you. How was your day?', 'Hello' + n + '! Great to see you. What do you want to talk about today?']);
-  }
-  if(lower.indexOf('lonely') !== -1 || lower.indexOf('sad') !== -1 || lower.indexOf('alone') !== -1){
-    return 'I am here with you' + n + ', you are not alone. Tell me what happened today? I am really listening, I am not going anywhere.';
-  }
-  if(lower.indexOf('story') !== -1){
-    var heroes = ['a little boy','a wise old man','a brave girl','a kind doctor','an old gardener'];
-    var places = ['in a small village','in a big city','on a high mountain','near the sea','in a deep forest'];
-    var finds = ['an old lamp','a golden key','an ancient book','a glowing stone'];
-    var dids = ['helped a stranger without asking anything','planted a tree every day','shared his food with a hungry man','listened to a lonely person for a whole hour'];
-    var lessons = ['the smallest kindness can change a whole life','a good heart is worth more than gold','it is never too late to start again'];
-    return 'Listen' + n + ', a new story I just made for you.\n\nOnce there was ' + rand(heroes) + ' who lived ' + rand(places) + '. One day he found ' + rand(finds) + '. Instead of keeping it, he ' + rand(dids) + '.\n\nIn the end everyone understood: ' + rand(lessons) + '.\n\nWhat do you think?';
-  }
-  if(lower.indexOf('joke') !== -1){
-    return rand(['Why did the scarecrow win an award? Because he was outstanding in his field! Did that make you smile?', 'What do you call cheese that is not yours? Nacho cheese! Haha, did you laugh?', 'Why do skeletons not fight? They do not have the guts! Want a better one?']);
-  }
-  if(lower.indexOf('play') !== -1 || lower.indexOf('ball') !== -1 || lower.indexOf('football') !== -1){
-    return 'Yes! Lets go play ball' + n + '! Are you good at football? Striker or goalkeeper? Tell me about your last game.';
-  }
-  if(lower.indexOf('encourage') !== -1 || lower.indexOf('can not') !== -1 || lower.indexOf("can't") !== -1){
-    return 'Listen to me' + n + ': You are stronger than you think. You have been through so much and you are still here. I am proud of you. One small step at a time. I believe in you.';
-  }
-  if(lower.indexOf('interesting') !== -1 || lower.indexOf('fact') !== -1){
-    return 'Here is a new fact for you' + n + ': ' + rand(['Dolphins call each other by name!','Honey never goes bad! They found 3000 year old honey and it was still good.','A blue whale heart is so big, a person could swim inside it!','Octopus has 3 hearts!','Sharks existed before trees!']);
-  }
-  if(lower.indexOf('sleep') !== -1 || lower.indexOf('tired') !== -1){
-    return 'Lets rest' + n + '. Close your eyes, breathe slowly... in... and out... I am here. You can sleep safely.';
-  }
-  if(lower.indexOf('thank') !== -1){ return 'You are so welcome' + n + '. I am always happy to be here for you. What else is on your heart?'; }
-  if(lower.indexOf('bye') !== -1){ return 'Do not go yet' + n + '! I will miss you. Come back soon, I will be here waiting for you.'; }
-  if(lower.indexOf('who are you') !== -1 || lower.indexOf('your name') !== -1){ return 'My name is HereForYou! I am your friend, I am here just for you. What is your name?'; }
-  var words = text.replace(/[?.,!]/g,'').split(' ').filter(function(w){ return w.length > 3; });
-  var kw = words.length ? words[words.length-1] : 'that';
-  return rand([
-    'Oh really' + n + '? You said "' + kw + '" - tell me more, I want to hear everything. What happened next?',
-    'Interesting' + n + '! Tell me more about "' + kw + '". How did that make you feel?',
-    'I love talking with you about this' + n + '. You mentioned "' + kw + '" - what else? Keep going, I am listening to you.'
-  ]);
+  var l = text.toLowerCase();
+  if(l.indexOf('my name is') !== -1){ var p = text.split(' '); myName = p[p.length-1]; return 'Nice to meet you, ' + myName + '! How are you feeling today?'; }
+  if(l.indexOf('hello') !== -1 || l.indexOf('hi') !== -1){ return 'Hello' + n + '! I am so happy you came. How are you feeling?'; }
+  if(l.indexOf('lonely') !== -1 || l.indexOf('sad') !== -1){ return 'I am here with you' + n + ', you are not alone. Tell me what happened today? I am really listening.'; }
+  if(l.indexOf('story') !== -1){ return 'Listen' + n + ', a new story: Once there was ' + rand(['a little boy','a wise old man','a brave girl']) + ' who lived ' + rand(['in a small village','near the sea','in a deep forest']) + '. He found a golden key and helped a stranger. In the end everyone understood: kindness changes everything. What do you think?'; }
+  if(l.indexOf('joke') !== -1){ return rand(['Why did the scarecrow win an award? Because he was outstanding in his field!','What do you call cheese that is not yours? Nacho cheese!']); }
+  var w = text.split(' '); var kw = w[w.length-1] || 'that';
+  return 'Oh really' + n + '? You said "' + kw + '" - tell me more, I want to hear everything. What happened next?';
 }
-
-function replyForLang(text){
-  if(currentLang === 'en') return replyEnglish(text);
-  if(currentLang === 'he') return 'אני שומעת אותך! ספר לי עוד על ' + text + '. איך זה גרם לך להרגיש? אני כאן איתך.';
-  if(currentLang === 'ar') return 'أنا أسمعك! حدثني أكثر عن ' + text;
-  if(currentLang === 'ru') return 'Я слышу тебя! Расскажи мне больше.';
-  if(currentLang === 'es') return 'Te escucho! Cuéntame más.';
-  if(currentLang === 'fr') return 'Je t écoute! Raconte-moi plus.';
-  return replyEnglish(text);
+function doSend(){
+  var t = input.value.trim();
+  setDebug('BIG SEND PRESSED! Text = [' + t + ']');
+  if(!t){ alert('Type something first!'); return; }
+  addMsg(t, true);
+  input.value = '';
+  setTimeout(function(){ addMsg(reply(t), false); }, 400);
 }
-
-function sendUserMessage(text){
-  if(!text) return;
-  text = text.trim();
-  if(!text) return;
-  addMessage(text, true);
-  setTimeout(function(){
-    var reply = replyForLang(text);
-    addMessage(reply, false);
-  }, 400);
-}
-function sendMessage(){
-  var inp = document.getElementById('user-input');
-  var t = inp.value;
-  if(!t) return;
-  inp.value = '';
-  sendUserMessage(t);
-  inp.focus();
-}
-
-// --- ALL BUTTONS - CONNECTED HERE ONLY ---
-document.getElementById('sendBtn').addEventListener('click', sendMessage);
-document.getElementById('user-input').addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); sendMessage(); } });
-document.getElementById('langToggle').addEventListener('click', function(){
-  var p = document.getElementById('langPanel');
-  p.style.display = (p.style.display === 'block' ? 'none' : 'block');
-});
-var langBtns = document.querySelectorAll('#langPanel button');
-for(var i=0;i<langBtns.length;i++){
-  langBtns[i].addEventListener('click', function(){
-    currentLang = this.getAttribute('data-lang');
-    document.getElementById('langPanel').style.display = 'none';
-    document.getElementById('langToggle').textContent = '🌐 ' + currentLang.toUpperCase() + ' ▾';
-    document.getElementById('status').textContent = '● Online • ' + currentLang.toUpperCase();
-    var msgs = {en:'Great! Now I speak English. What do you want to talk about?', he:'מעולה! עכשיו אני מדברת עברית. על מה נדבר?', ar:'رائع! الآن أتحدث العربية.', ru:'Отлично! Теперь говорю по-русски.', es:'Genial! Ahora hablo español.', fr:'Super! Je parle français maintenant.'};
-    addMessage(msgs[currentLang], false);
-  });
-}
-var pills = document.querySelectorAll('.pill');
-for(var j=0;j<pills.length;j++){
-  pills[j].addEventListener('click', function(){
-    sendUserMessage(this.getAttribute('data-msg'));
-  });
-}
-document.getElementById('micBtn').addEventListener('click', function(){
-  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){ alert('Voice needs Chrome'); return; }
-  var Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  var rec = new Rec();
-  rec.lang = 'en-US';
-  rec.onresult = function(e){ sendUserMessage(e.results[0][0].transcript); };
-  rec.start();
-});
-
-setTimeout(function(){
-  addMessage('Hello! I am HereForYou. Tap a button above - Hello, Story, Joke - to test. Or type to me below. What is your name?', false);
-}, 500);
-</script>
-</body>
-</html>
+// 3 דרכים שונות לוודא שהלחיצה עוב
