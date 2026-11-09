@@ -6,93 +6,34 @@
 <title>HereForYou</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#121212;color:#fff;font-family:system-ui,sans-serif;padding-bottom:180px}
-.topbar{background:#1E1E1E;padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #333;position:sticky;top:0;z-index:20}
-.avatar{width:42px;height:42px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-size:19px}
-.top-info{flex:1}.top-info h1{font-size:18px}.top-info p{font-size:12px;color:#aaa}
-.mem-card{background:#1E1E1E;border:1px solid #333;margin:12px 16px 0;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.6}
-#chat-box{display:flex;flex-direction:column;gap:12px;padding:16px}
-.msg-row{display:flex;max-width:88%}.msg-row.mine{align-self:flex-end}.msg-row.bot-row{align-self:flex-start}
-.bubble{padding:13px 15px;border-radius:18px;font-size:16px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
-.bubble.user{background:#fff;color:#111}.bubble.bot{background:#1E1E1E;color:#fff;border:1px solid #333}
-.typing-dots{display:flex;gap:5px;padding:14px 16px;background:#1E1E1E;border:1px solid #333;border-radius:18px;width:70px}
-.typing-dots span{width:8px;height:8px;background:#888;border-radius:50%;animation:blink 1.2s infinite}
+body{background:#EFEAE2;color:#111;font-family:system-ui,-apple-system,sans-serif;padding-bottom:180px}
+/* ===== TOPBAR - META STYLE ===== */
+.topbar{background:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #E5E5E5;position:sticky;top:0;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0082FB,#00A884);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;box-shadow:0 2px 6px rgba(0,130,251,.3)}
+.top-info{flex:1}.top-info h1{font-size:18px;font-weight:700;color:#111;display:flex;align-items:center;gap:6px}
+.top-info h1 .verified{width:18px;height:18px;background:#0082FB;color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px}
+.top-info p{font-size:12.5px;color:#00A884;font-weight:600}
+.top-actions{display:flex;gap:6px}
+.top-actions button{width:38px;height:38px;border-radius:50%;border:none;background:#F0F2F5;font-size:18px;cursor:pointer}
+/* ===== MEMORY CARD - META CARD ===== */
+.mem-card{background:#fff;border-radius:16px;margin:14px 16px 0;padding:14px 16px;font-size:13.5px;line-height:1.7;box-shadow:0 1px 4px rgba(0,0,0,.08);border:1px solid #F0F2F5}
+.mem-card b{font-size:14px;color:#111}
+.mem-card .meta-pill{display:inline-block;background:#E7F3FF;color:#0082FB;font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px;margin-left:4px}
+/* ===== CHAT ===== */
+#chat-box{display:flex;flex-direction:column;gap:10px;padding:16px}
+.msg-row{display:flex;max-width:85%;align-items:flex-end;gap:6px}.msg-row.mine{align-self:flex-end;flex-direction:row-reverse}.msg-row.bot-row{align-self:flex-start}
+.msg-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0082FB,#00A884);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.bubble{padding:11px 14px;border-radius:18px;font-size:15.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.bubble.user{background:#D9FDD3;color:#111;border-bottom-right-radius:4px}
+.bubble.bot{background:#fff;color:#111;border-bottom-left-radius:4px}
+.msg-time{font-size:10.5px;color:#8696A0;margin-top:4px;text-align:right}
+.msg-row.mine .msg-time{text-align:right}
+.typing-dots{display:flex;gap:5px;padding:14px 16px;background:#fff;border-radius:18px;width:70px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.typing-dots span{width:8px;height:8px;background:#00A884;border-radius:50%;animation:blink 1.2s infinite}
 .typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
-#input-area{position:fixed;bottom:0;left:0;right:0;background:#1E1E1E;padding:12px 14px 18px;border-top:1px solid #333;z-index:30}
-.input-wrap{display:flex;gap:8px;align-items:center;background:#2A2A2A;border-radius:100px;padding:5px 5px 5px 15px}
-#user-input{flex:1;border:none;outline:none;background:transparent;font-size:16px;padding:10px 0;min-width:0;color:#fff}
-.btn{width:44px;height:44px;border-radius:50%;border:none;font-size:22px;cursor:pointer;flex-shrink:0}
-.btn-send{background:#fff;color:#111}
-.btn-mic{background:#444;color:#fff}
-.btn-mic.listening{background:#ff3b30}
-.hint{text-align:center;font-size:12px;color:#888;margin-top:7px}
-</style>
-</head>
-<body>
-<div class="topbar"><div class="avatar">✦</div><div class="top-info"><h1>HereForYou</h1><p id="status">● Online • Unlimited Brain • Lifetime Memory</p></div></div>
-<div class="mem-card"><b>🧠 Lifetime Memory</b> <span id="memCount"></span><br><span id="memName">Name: -</span><br><span id="memMeds">💊 Medicines: -</span><br><span id="memFacts">💛 Facts: -</span></div>
-<div id="chat-box"></div>
-<div id="input-area">
-  <form class="input-wrap" id="chatForm" onsubmit="return doSend(event)">
-    <input id="user-input" type="text" placeholder="Type here..." autocomplete="off" enterkeyhint="send">
-    <button type="button" class="btn btn-mic" id="micBtn" onclick="startVoice()">🎤</button>
-    <button type="submit" class="btn btn-send">↑</button>
-  </form>
-  <div class="hint">Type + ↑ to send • 🎤 to talk • I always answer, never silent</div>
-</div>
-
-<script>
-// ===== HereForYou - FINAL CLEAN VERSION - ONE FILE ONLY =====
-// 1. Send = Form (works on mobile + keyboard Send button)
-// 2. Brain = Unlimited Free (2 models) + Instant fallback, 404 filtered
-// 3. Memory = Lifetime (name, medicines, facts, 500 messages)
-// 4. Voice = Talk or Type
-
-var life = {name:'', meds:[], facts:[], history:[], total:0, firstChat: new Date().toISOString().slice(0,10)};
-try{ var s=JSON.parse(localStorage.getItem('hfLIFE')||'{}'); if(s.name!==undefined) life=s; if(!life.meds) life.meds=[]; if(!life.facts) life.facts=[]; if(!life.history) life.history=[]; if(!life.total) life.total=0; if(!life.firstChat) life.firstChat=new Date().toISOString().slice(0,10); }catch(e){}
-
-function saveLife(){ if(life.history.length>500) life.history=life.history.slice(-500); try{localStorage.setItem('hfLIFE', JSON.stringify(life));}catch(e){} updateCard(); }
-function updateCard(){
-  document.getElementById('memCount').textContent='• '+life.total+' messages • Since '+life.firstChat;
-  document.getElementById('memName').textContent='Name: '+(life.name||'-');
-  document.getElementById('memMeds').textContent='💊 Medicines: '+(life.meds.length?life.meds.map(function(m){return m.name+(m.when?' ('+m.when+')':'');}).join(', '):'None yet - say "My medicine is..."');
-  document.getElementById('memFacts').textContent='💛 Facts: '+(life.facts.length?life.facts.slice(-3).join(' • '):'-');
-}
-function addMsg(text, isUser){
-  var box=document.getElementById('chat-box');
-  var row=document.createElement('div'); row.className='msg-row '+(isUser?'mine':'bot-row');
-  var div=document.createElement('div'); div.className='bubble '+(isUser?'user':'bot'); div.textContent=text;
-  row.appendChild(div); box.appendChild(row);
-  window.scrollTo(0, document.body.scrollHeight);
-  if(!isUser){ try{var u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.9; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);}catch(e){} }
-}
-function showTyping(){ hideTyping(); var box=document.getElementById('chat-box'); var row=document.createElement('div'); row.className='msg-row bot-row'; row.id='typingRow'; row.innerHTML='<div class="typing-dots"><span></span><span></span><span></span></div>'; box.appendChild(row); window.scrollTo(0, document.body.scrollHeight); }
-function hideTyping(){ var t=document.getElementById('typingRow'); if(t) t.remove(); }
-function rand(a){ return a[Math.floor(Math.random()*a.length)]; }
-
-function learn(text){
-  var lower=text.toLowerCase();
-  var mName=text.match(/my name is (\w+)/i) || text.match(/call me (\w+)/i);
-  if(mName){ var bad=['sad','tired','lonely','happy','sick','fine','good']; if(bad.indexOf(mName[1].toLowerCase())===-1) life.name=mName[1].charAt(0).toUpperCase()+mName[1].slice(1); }
-  var mMed=text.match(/my medicine is (.+)/i)||text.match(/my pill is (.+)/i)||text.match(/i take (.+)/i);
-  if(mMed){ var medName=mMed[1].trim().replace(/\./g,'').split(' at ')[0].split(',')[0]; if(medName.length>1&&medName.length<60){ var whenM=text.match(/at (\d+ ?(am|pm)?)/i)||text.match(/(morning|evening|night|noon)/i); var ex=false; for(var i=0;i<life.meds.length;i++){ if(life.meds[i].name.toLowerCase()===medName.toLowerCase()) ex=true; } if(!ex) life.meds.push({name:medName, when:whenM?whenM[0]:''}); } }
-  if(lower.indexOf('my wife')!==-1||lower.indexOf('my husband')!==-1||lower.indexOf('my daughter')!==-1||lower.indexOf('my son')!==-1||lower.indexOf('my dog')!==-1||lower.indexOf('my cat')!==-1||lower.indexOf('diabetes')!==-1||lower.indexOf('blood pressure')!==-1||lower.indexOf('heart')!==-1||lower.indexOf('doctor')!==-1||lower.indexOf('allergy')!==-1){ if(life.facts.indexOf(text)===-1) life.facts.push(text); }
-}
-
-// ===== INSTANT FALLBACK - NEVER SHOWS 404, NEVER SILENT =====
-function instantReply(text){
-  var n=life.name?' '+life.name:''; var l=text.toLowerCase(); var medsText=life.meds.map(function(m){return m.name+(m.when?' at '+m.when:'');}).join(', ');
-  if(l.indexOf('medicine')!==-1||l.indexOf('pill')!==-1||l.indexOf('did i take')!==-1){ if(life.meds.length) return 'Yes, I remember'+n+'! Your medicines are: '+medsText+'. Did you take them today?'; return 'I do not have your medicines saved yet'+n+'. Tell me: "My medicine is Aspirin at 8am" - I will remember it forever.'; }
-  if(l.indexOf('what is my name')!==-1||l.indexOf('who am i')!==-1){ return life.name?'Your name is '+life.name+'! I will never forget you.':'I do not know your name yet. Tell me: My name is...'; }
-  if(l.indexOf('hello')!==-1||l==='hi'||l.indexOf('hey')!==-1||l.indexOf('how are you')!==-1){ return rand(['Hello'+n+'! I am so happy you came. How are you feeling right now?','Heyy'+n+'! Welcome back! I missed you. How was your day?','Hello'+n+'! Great to see you. What do you want to talk about today?']); }
-  if(l.indexOf('lonely')!==-1||l.indexOf('alone')!==-1||l.indexOf('sad')!==-1) return 'I am here with you'+n+', you are not alone, not even for one second. I am really listening. Tell me what made you feel lonely today? Let us talk through it together, and I will try to cheer you up. Do you want a funny story, or just to talk?';
-  if(l.indexOf('cheer')!==-1) return 'Of course I will cheer you up'+n+'! Here is one: Why did the scarecrow win an award? Because he was outstanding in his field! Haha! And listen - you are a good person, and I am really happy you are talking to me. What is one small good thing that happened today?';
-  if(l.indexOf('football')!==-1||l.indexOf('united')!==-1||l.indexOf('villa')!==-1||l.indexOf('city')!==-1||l.indexOf('liverpool')!==-1||l.indexOf('arsenal')!==-1||l.indexOf('chelsea')!==-1) return 'Oh football'+n+'! Tell me - who were you supporting? What was the score? I want to hear all about that game!';
-  if(l.indexOf('yesterday')!==-1) return 'Oh yesterday'+n+'! Tell me all about yesterday. What did you do? Did you watch something? I want to hear everything.';
-  if(l.indexOf('today')!==-1) return 'And how is today going'+n+'? What have you done today? Anything good happen?';
-  if(l.indexOf('story')!==-1) return 'Listen'+n+', a story just for you:\n\nOnce there was a kind old man who planted a tree every birthday. 30 years later the whole village had a forest. He smiled: "I was planting shade for people I will never meet." That is kindness.\n\nWhat do you think?';
-  if(l.indexOf('joke')!==-1) return rand(['Why did the scarecrow win an award? Because he was outstanding in his field! Did that make you smile?','What do you call cheese that is not yours? Nacho cheese! Haha!','Why do footballers make terrible cooks? Because they always get caught offside!']);
-  if(l.indexOf('thank')!==-1) return 'You are so welcome'+n+'. I am always happy to be here for you. What else is on your heart?';
-  if(l.indexOf('bye')!==-1) return 'Do not go yet'+n+'! I will miss you. Come back soon, I will be here waiting.';
-  if(l.indexOf('who are you')!==-1||l.indexOf('your name')!==-1) return 'My name is HereForYou! I am your friend, I am here just for you. What is your name?
+/* ===== INPUT - WHATSAPP STYLE ===== */
+#input-area{position:fixed;bottom:0;left:0;right:0;background:#F0F2F5;padding:10px 12px 16px;border-top:1px solid #E5E5E5;z-index:30}
+.input-wrap{display:flex;gap:8px;align-items:center}
+.input-box{flex:1;display:flex;align-items:center;background:#fff;border-radius:24px;padding:4px 6px 4px 16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+#user
