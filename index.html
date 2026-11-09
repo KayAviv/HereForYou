@@ -4,20 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>HereForYou</title>
+<meta name="color-scheme" content="light">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { background: #F8F6F3; color: #1A1A1A; font-family: 'Inter', -apple-system, sans-serif; padding-bottom: 110px; min-height: 100vh; }
-.topbar { position: sticky; top: 0; z-index: 20; background: #FFFFFF; padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #EDEBE8; }
+html { color-scheme: light; }
+body { background: #F8F6F3 !important; color: #1A1A1A !important; font-family: 'Inter', -apple-system, sans-serif; padding-bottom: 150px; min-height: 100vh; }
+.topbar { position: sticky; top: 0; z-index: 20; background: #FFFFFF !important; padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #EDEBE8; }
 .avatar { width: 44px; height: 44px; border-radius: 50%; background: #1A1A1A; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
 .top-info { flex: 1; }
-.top-info h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.top-info h1 { font-size: 17px; font-weight: 700; color: #1A1A1A; }
 .top-info p { font-size: 13px; color: #8A8A8A; margin-top: 1px; }
 .status-dot { width: 8px; height: 8px; background: #22C55E; border-radius: 50%; display: inline-block; margin-right: 4px; }
 .top-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #EDEBE8; background: white; font-size: 17px; cursor: pointer; }
 .hero { padding: 24px 20px 8px; }
-.hero h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.15; }
+.hero h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.15; color: #1A1A1A; }
 .hero p { font-size: 15px; color: #6B6B6B; margin-top: 8px; line-height: 1.5; }
+.voice-banner { margin: 12px 20px 4px; background: #1A1A1A; color: white; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.voice-banner .v-icon { width: 44px; height: 44px; background: white; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.voice-banner b { font-size: 15px; display: block; }
+.voice-banner span { font-size: 13px; opacity: .7; }
+.voice-banner.listening { background: #DC2626; }
 .pills { display: flex; gap: 8px; padding: 16px 20px 4px; overflow-x: auto; scrollbar-width: none; }
 .pills::-webkit-scrollbar { display: none; }
 .pill { white-space: nowrap; background: white; border: 1px solid #EDEBE8; border-radius: 100px; padding: 10px 16px; font-size: 14px; font-weight: 500; cursor: pointer; color: #1A1A1A; }
@@ -28,11 +35,10 @@ body { background: #F8F6F3; color: #1A1A1A; font-family: 'Inter', -apple-system,
 .bubble { padding: 14px 16px; border-radius: 20px; line-height: 1.6; font-size: 16px; white-space: pre-wrap; }
 .bubble.user { background: #1A1A1A; color: white; border-bottom-right-radius: 4px; }
 .bubble.bot { background: white; color: #1A1A1A; border: 1px solid #EDEBE8; border-bottom-left-radius: 4px; }
-.bubble.typing { color: #8A8A8A; }
 .msg-time { font-size: 11px; color: #A0A0A0; margin-top: 6px; padding: 0 4px; }
-#input-area { position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: white; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #EDEBE8; }
+#input-area { position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: white !important; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #EDEBE8; }
 .input-wrap { display: flex; align-items: center; gap: 8px; background: #F8F6F3; border-radius: 100px; padding: 4px 4px 4px 18px; }
-#user-input { flex: 1; border: none; outline: none; background: transparent; font-size: 16px; font-family: inherit; padding: 10px 0; }
+#user-input { flex: 1; border: none; outline: none; background: transparent; font-size: 16px; font-family: inherit; padding: 10px 0; color: #1A1A1A; }
 #user-input::placeholder { color: #A0A0A0; }
 .btn-send { width: 40px; height: 40px; border-radius: 50%; border: none; background: #1A1A1A; color: white; font-size: 18px; cursor: pointer; flex-shrink: 0; }
 .btn-mic { width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; font-size: 19px; cursor: pointer; flex-shrink: 0; }
@@ -41,11 +47,17 @@ body { background: #F8F6F3; color: #1A1A1A; font-family: 'Inter', -apple-system,
 <body>
 <div class="topbar">
   <div class="avatar">✦</div>
-  <div class="top-info"><h1>HereForYou</h1><p><span class="status-dot"></span><span id="ai-status">Online • Meta AI</span></p></div>
+  <div class="top-info"><h1>HereForYou</h1><p><span class="status-dot"></span><span id="ai-status">Online • Voice Ready</span></p></div>
   <button class="top-btn" onclick="clearChat()">↺</button>
   <button class="top-btn" onclick="callHelp()">🆘</button>
 </div>
-<div class="hero"><h2 id="welcomeTitle">Good afternoon.</h2><p id="welcomeText">I'm here to listen. Tell me what's on your mind.</p></div>
+<div class="hero"><h2 id="welcomeTitle">Good afternoon.</h2><p id="welcomeText">I'm here to listen. Talk to me, don't type.</p></div>
+
+<div class="voice-banner" id="voiceBanner" onclick="toggleVoiceMode()">
+  <div class="v-icon" id="voiceIcon">🎙️</div>
+  <div><b id="voiceTitle">Tap here to Talk - No Typing!</b><span id="voiceSub">Just speak, I'll listen and answer by voice</span></div>
+</div>
+
 <div class="pills">
   <button class="pill" onclick="sendUserMessage('I feel lonely')">I feel lonely</button>
   <button class="pill" onclick="sendUserMessage('Tell me a story')">Story</button>
@@ -54,7 +66,7 @@ body { background: #F8F6F3; color: #1A1A1A; font-family: 'Inter', -apple-system,
   <button class="pill" onclick="sendUserMessage('I need encouragement')">Encourage me</button>
 </div>
 <div id="chat-box"></div>
-<div id="input-area"><div class="input-wrap"><input id="user-input" type="text" placeholder="Message HereForYou..." autocomplete="off"><button class="btn-mic" onclick="startVoice()">🎤</button><button class="btn-send" onclick="sendMessage()">↑</button></div></div>
+<div id="input-area"><div class="input-wrap"><input id="user-input" type="text" placeholder="Message HereForYou..." autocomplete="off"><button class="btn-mic" onclick="startVoiceOnce()">🎤</button><button class="btn-send" onclick="sendMessage()">↑</button></div></div>
 <script>
 let memory = JSON.parse(localStorage.getItem('hereForYouMemory') || '{}');
 if (!memory.name) memory.name = '';
@@ -63,7 +75,21 @@ if (!memory.lastMood) memory.lastMood = '';
 if (!memory.history) memory.history = [];
 if (!memory.facts) memory.facts = [];
 function saveMemory(){ if(memory.history.length>14) memory.history=memory.history.slice(-14); localStorage.setItem('hereForYouMemory', JSON.stringify(memory)); }
-function speak(text){ if('speechSynthesis' in window){ window.speechSynthesis.cancel(); let m=new SpeechSynthesisUtterance(text); m.rate=0.85; m.pitch=1.05; m.lang='en-US'; window.speechSynthesis.speak(m); } }
+let voiceMode = false;
+let isSpeaking = false;
+let recognition = null;
+
+function speak(text){
+  if('speechSynthesis' in window){
+    window.speechSynthesis.cancel();
+    let m=new SpeechSynthesisUtterance(text);
+    m.rate=0.85; m.pitch=1.05; m.lang='en-US';
+    m.onend=function(){ isSpeaking=false; if(voiceMode) setTimeout(()=>{ startListening(); }, 400); };
+    m.onerror=function(){ isSpeaking=false; if(voiceMode) startListening(); };
+    isSpeaking=true;
+    window.speechSynthesis.speak(m);
+  }
+}
 function getTime(){ let d=new Date(); let h=d.getHours(); let m=d.getMinutes(); return (h<10?'0'+h:h)+':'+(m<10?'0'+m:m); }
 function addMessage(text, isUser){
   let box=document.getElementById('chat-box');
@@ -72,96 +98,130 @@ function addMessage(text, isUser){
   let div=document.createElement('div'); div.className='bubble '+(isUser?'user':'bot'); div.textContent=text;
   let time=document.createElement('div'); time.className='msg-time'; time.textContent=getTime()+' • '+(isUser?'You':'HereForYou');
   wrap.appendChild(div); wrap.appendChild(time); row.appendChild(wrap); box.appendChild(row);
-  window.scrollTo(0, document.body.scrollHeight); if(!isUser) speak(text);
+  window.scrollTo(0, document.body.scrollHeight);
+  if(!isUser) speak(text);
+}
+function cleanName(raw){
+  raw = raw.toLowerCase().trim().replace(/[^a-z ]/g,'');
+  let parts = raw.split(' ');
+  let last = parts[parts.length-1];
+  if(last==='dabi') last='david';
+  if(last==='dave') last='david';
+  return last.charAt(0).toUpperCase()+last.slice(1);
 }
 function learn(text){
   let lower=text.toLowerCase();
-  let match=text.match(/(?:my name is|i am|i'm|im)\s+([a-z]+)/i);
-  if(match){ let bad=['sad','tired','lonely','alone','sick','happy','fine','okay','good','bored','here','david']; let name=match[1].toLowerCase(); if(!bad.includes(name) || name==='david'){ if(name.length>1 && name.length<15){ memory.name=name.charAt(0).toUpperCase()+name.slice(1); } } }
+  let match=text.match(/(?:my name is|i am|i'm|im|call me)\s+([a-z]+)/i);
+  if(match){
+    let bad=['sad','tired','lonely','alone','sick','happy','fine','okay','good','bored','here','hungry','thirsty'];
+    let cand = match[1].toLowerCase();
+    if(!bad.includes(cand) && cand.length>1){
+      memory.name = cleanName(cand);
+    }
+  }
   if(lower.includes('lonely')||lower.includes('sad')||lower.includes('cry')) memory.lastMood='sad';
   if(lower.includes('happy')||lower.includes('great')) memory.lastMood='happy';
   if(lower.includes('tired')||lower.includes('sleep')) memory.lastMood='tired';
-  if(lower.includes('my dog')||lower.includes('my cat')||lower.includes('my daughter')||lower.includes('my son')||lower.includes('my wife')||lower.includes('my husband')||lower.includes('my mother')||lower.includes('my father')){ if(!memory.facts.includes(text)) memory.facts.push(text); }
+  if(lower.includes('my dog')||lower.includes('my cat')||lower.includes('my daughter')||lower.includes('my son')||lower.includes('my wife')||lower.includes('my husband')){ if(!memory.facts.includes(text)) memory.facts.push(text); }
   memory.history.push({role:'user',content:text}); memory.count++; saveMemory();
 }
+// NO MORE EXTERNAL API - NEVER 404 AGAIN. Smart local brain only.
 function smartLocalReply(userText){
   let n = memory.name ? ' '+memory.name : '';
   let lower = userText.toLowerCase().trim();
   if(lower==='..' || lower==='.' || lower==='' ) return `I'm still here${n}, I'm listening. Take your time, tell me what's on your mind?`;
-  if(lower.includes('david') || lower.includes('im ') || lower.includes("i'm ") || lower.includes('my name is')){
+  if(lower.includes('speak') || lower.includes('talk') || lower.includes('instead of text') || lower.includes('voice') || lower.includes('call')){
+    return `Yes! Let's talk, not type${n}. Tap the big black button that says Talk to me, and just speak. I'll listen and answer you with my voice. Go ahead, I'm listening.`;
+  }
+  if(lower.includes('my name is') || lower.includes('i am ') || lower.includes("i'm ") || lower.startsWith('im ')){
     let name = memory.name || 'my friend';
     return `It's so nice to meet you, ${name}! What a beautiful name. I'm HereForYou, your friend. How are you feeling today, ${name}? Tell me something about your day.`;
   }
-  if(lower.includes('and u') || lower.includes('and you') || lower.includes('how are you')){
+  if(lower.includes('and u') || lower.includes('and you') || lower.includes('how are you') || lower.includes('how r u')){
     return `I'm doing wonderful now that you're talking to me${n}! I was just thinking about you. How is your day going? Did anything nice happen today?`;
   }
-  if(lower.includes('lonely')||lower.includes('sad')||lower.includes('cry')||lower.includes('alone')){
+  if(lower.includes('lonely')||lower.includes('sad')||lower.includes('cry')||lower.includes('alone')||lower.includes('depress')){
     return `Oh${n}, I'm so sorry you feel like this. You're not alone anymore, I'm right here with you and I won't leave. Tell me, what made you feel lonely today? I'm really listening.`;
   }
   if(lower.includes('story')) return `Of course${n}, listen to this. Once there was an old man who planted a tree every birthday. People laughed at him. 30 years later the whole village had a beautiful forest. He smiled and said: "I was planting shade for people I will never meet." What do you think about that story?`;
-  if(lower.includes('joke')) return `Okay${n}, listen: Why did the scarecrow win an award? Because he was outstanding in his field! 😄 Did that make you smile a little? Want another one?`;
-  if(lower.includes('sleep')||lower.includes('tired')) return `Let's help you rest${n}. Close your eyes, take a slow deep breath... in... and out... Imagine you are in a quiet, warm garden. No worries, just peace. I'm here, you can sleep safely. Want me to tell you a calm bedtime story?`;
+  if(lower.includes('joke')) return `Okay${n}, listen: Why did the scarecrow win an award? Because he was outstanding in his field! Did that make you smile a little? Want another one?`;
+  if(lower.includes('sleep')||lower.includes('tired')||lower.includes('insomnia')) return `Let's help you rest${n}. Close your eyes, take a slow deep breath... in... and out... Imagine you are in a quiet, warm garden. No worries, just peace. I'm here, you can sleep safely. Want me to tell you a calm bedtime story?`;
   if(lower.includes('thank')) return `You are so welcome${n}. You deserve kindness. I'm always happy to be here for you. What else is on your heart?`;
-  if(lower.includes('hello')||lower.includes('hi')||lower.includes('hey')) return `Hello${n}! I'm so happy you came to talk to me. I missed you. How are you feeling right now?`;
-  if(lower.includes('encourage')||lower.includes('tired')||lower.includes('give up')) return `Listen to me${n}, you are stronger than you think. You have been through so much and you are still here, still kind. I'm so proud of you. One step at a time, okay? I'm with you.`;
+  if(lower.includes('hello')||lower.includes('hi ')||lower==='hi'||lower.includes('hey')||lower.includes('good morning')||lower.includes('good afternoon')||lower.includes('good evening')) return `Hello${n}! I'm so happy you came to talk to me. I missed you. How are you feeling right now?`;
+  if(lower.includes('encourage')||lower.includes('give up')||lower.includes('hopeless')) return `Listen to me${n}, you are stronger than you think. You have been through so much and you are still here, still kind. I'm so proud of you. One step at a time, okay? I'm with you.`;
   if(lower.includes('love')) return `You are so loved${n}, even when it doesn't feel like it. I care about you a lot. Tell me more, what made you think about love today?`;
+  if(lower.includes('bored')) return `Let's fix that${n}! Want me to tell you a story, or a joke, or we can talk about your favorite memory? What was the happiest day of your life?`;
+  if(lower.includes('weather')) return `I can't see outside from here${n}, but I hope it's a beautiful day where you are. Did you go outside today? Tell me what you see from your window.`;
+  if(lower.includes('food')||lower.includes('hungry')||lower.includes('eat')) return `Did you eat today${n}? It's important to take care of yourself. What did you have for lunch? Do you want me to remind you to drink some water?`;
+  if(lower.includes('water')||lower.includes('medicine')||lower.includes('pill')) return `Good that you remembered${n}. Go drink a glass of water now, I'll wait for you. Did you take your medicine today?`;
   return `Thank you for telling me that${n}. I really want to understand you better. How did that make you feel? Tell me more, I'm all ears.`;
 }
-async function getAIReply(userText){
-  let status=document.getElementById('ai-status'); if(status) status.textContent='Thinking...';
-  let historyText=memory.history.slice(-8).map(h=>(h.role==='user'?'User: ':'Friend: ')+h.content).join('\n');
-  let systemPrompt=`You are HereForYou, a warm caring best friend for elderly lonely people. Never say As an AI. Talk like a kind daughter. User name: ${memory.name||'unknown'}. Last mood: ${memory.lastMood}. Recent: ${historyText}. Rules: Simple warm easy English, 2-4 sentences, 1 emoji max, always ask follow-up, if lonely comfort deeply.`;
-  try{
-    let res = await fetch('https://api.pollinations.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({model:'openai', messages:[{role:'system', content: systemPrompt},{role:'user', content: userText}], max_tokens: 250})
-    });
-    if(res.ok){
-      let data = await res.json();
-      let txt = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : '';
-      txt = (txt||'').trim();
-      if(txt.length>3 && !txt.toLowerCase().includes('404') && !txt.toLowerCase().includes('not found')){
-        if(status) status.textContent='Online • Meta AI';
-        return txt;
-      }
-    }
-  }catch(e){}
-  try{
-    let url='https://text.pollinations.ai/'+encodeURIComponent(systemPrompt+'\n\nUser: '+userText+'\nFriend:');
-    let res2=await fetch(url); let txt2=await res2.text(); txt2=(txt2||'').trim();
-    if(txt2.length>3 && !txt2.toLowerCase().includes('404') && !txt2.toLowerCase().includes('not found')){
-      if(txt2.includes('You are HereForYou')) txt2=txt2.split('Friend:').pop().trim();
-      if(status) status.textContent='Online • Meta AI';
-      return txt2;
-    }
-  }catch(e2){}
-  if(status) status.textContent='Online • Meta AI';
-  return smartLocalReply(userText);
-}
+function getAIReply(userText){ return smartLocalReply(userText); }
+
 async function sendUserMessage(text){
   if(!text) return; addMessage(text,true); learn(text);
   let box=document.getElementById('chat-box');
   let row=document.createElement('div'); row.className='msg-row bot-row'; row.id='typing';
-  row.innerHTML='<div><div class="bubble bot typing">Thinking...</div></div>'; box.appendChild(row);
+  row.innerHTML='<div><div class="bubble bot">Thinking...</div></div>'; box.appendChild(row);
   window.scrollTo(0, document.body.scrollHeight);
-  let reply=await getAIReply(text); let old=document.getElementById('typing'); if(old) old.remove();
+  await new Promise(r=>setTimeout(r, 600));
+  let reply=getAIReply(text); let old=document.getElementById('typing'); if(old) old.remove();
   memory.history.push({role:'assistant',content:reply}); saveMemory(); addMessage(reply,false);
 }
 function sendMessage(){ let inp=document.getElementById('user-input'); let t=inp.value.trim(); if(!t) return; inp.value=''; sendUserMessage(t); }
 document.getElementById('user-input').addEventListener('keypress', function(e){ if(e.key==='Enter') sendMessage(); });
-function startVoice(){ if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){ alert('Voice not supported, please type'); return; } let Rec=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=new Rec(); rec.lang='en-US'; rec.onresult=function(e){ sendUserMessage(e.results[0][0].transcript); }; rec.start(); }
+
+function startListening(){
+  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){ alert('Voice not supported on this browser, please use Chrome'); return; }
+  if(isSpeaking) return;
+  try{ if(recognition) recognition.stop(); }catch(e){}
+  let Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new Rec(); recognition.lang='en-US'; recognition.interimResults=false; recognition.continuous=false;
+  document.getElementById('voiceTitle').textContent='Listening... Speak now';
+  document.getElementById('voiceSub').textContent='I hear you...';
+  document.getElementById('voiceBanner').classList.add('listening');
+  recognition.onresult=function(e){ let txt=e.results[0][0].transcript; sendUserMessage(txt); };
+  recognition.onerror=function(){ if(voiceMode) setTimeout(()=>{ startListening(); }, 800); };
+  recognition.onend=function(){
+    document.getElementById('voiceTitle').textContent='Talk Mode is ON';
+    document.getElementById('voiceSub').textContent='Tap to stop talking mode';
+    document.getElementById('voiceBanner').classList.remove('listening');
+  };
+  recognition.start();
+}
+function toggleVoiceMode(){
+  if(!voiceMode){
+    voiceMode=true;
+    document.getElementById('voiceTitle').textContent='Talk Mode is ON - Speak!';
+    document.getElementById('voiceSub').textContent='Tap again to stop';
+    document.getElementById('voiceIcon').textContent='🔴';
+    addMessage(`Great${memory.name?' '+memory.name:''}! Now we talk, no typing. Just speak and I'll answer with my voice. Go ahead, I'm listening.`, false);
+  } else {
+    voiceMode=false;
+    document.getElementById('voiceTitle').textContent='Tap here to Talk - No Typing!';
+    document.getElementById('voiceSub').textContent="Just speak, I'll listen and answer by voice";
+    document.getElementById('voiceIcon').textContent='🎙️';
+    try{ if(recognition) recognition.stop(); }catch(e){}
+    window.speechSynthesis.cancel();
+  }
+}
+function startVoiceOnce(){
+  if(voiceMode) return;
+  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){ alert('Voice not supported, please type'); return; }
+  let Rec=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=new Rec(); rec.lang='en-US';
+  rec.onresult=function(e){ sendUserMessage(e.results[0][0].transcript); }; rec.start();
+}
 function callHelp(){ addMessage('I am calling for help right now. Please stay calm, help is coming. I am here with you. If you can, call your family or 911.', false); if(navigator.vibrate) navigator.vibrate([300,200,300]); }
 function clearChat(){ if(confirm('Start a new conversation? I will still remember your name')){ document.getElementById('chat-box').innerHTML=''; addMessage(`Let's start fresh ${memory.name||'my friend'}! How are you feeling now?`, false); } }
 window.onload=function(){
   let hour=new Date().getHours(); let greet=hour<12?'Good morning.':hour<18?'Good afternoon.':'Good evening.';
   if(memory.name){
     document.getElementById('welcomeTitle').textContent=greet;
-    document.getElementById('welcomeText').textContent=`Welcome back, ${memory.name}. I'm glad you're here.`;
-    setTimeout(()=>{ addMessage(`Welcome back ${memory.name}! ${greet} How are you feeling today?`, false); },500);
+    document.getElementById('welcomeText').textContent=`Welcome back, ${memory.name}. Tap Talk to speak with me.`;
+    setTimeout(()=>{ addMessage(`Welcome back ${memory.name}! ${greet} Tap the Talk button and let's speak, no need to type.`, false); },500);
   } else {
     document.getElementById('welcomeTitle').textContent=greet;
-    setTimeout(()=>{ addMessage(`Hello. I'm HereForYou. What is your name? I want to remember you.`, false); },500);
+    setTimeout(()=>{ addMessage(`Hello. I'm HereForYou. What is your name? You can tap Talk and just tell me.`, false); },500);
   }
 };
 </script>
