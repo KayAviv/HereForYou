@@ -15,12 +15,17 @@ body{background:#121212;color:#fff;font-family:system-ui,sans-serif;padding-bott
 .msg-row{display:flex;max-width:88%}.msg-row.mine{align-self:flex-end}.msg-row.bot-row{align-self:flex-start}
 .bubble{padding:13px 15px;border-radius:18px;font-size:16px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
 .bubble.user{background:#fff;color:#111}.bubble.bot{background:#1E1E1E;color:#fff;border:1px solid #333}
+.typing-dots{display:flex;gap:5px;padding:14px 16px;background:#1E1E1E;border:1px solid #333;border-radius:18px;width:70px}
+.typing-dots span{width:8px;height:8px;background:#888;border-radius:50%;animation:blink 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
 #input-area{position:fixed;bottom:0;left:0;right:0;background:#1E1E1E;padding:12px 14px 18px;border-top:1px solid #333;z-index:30}
 .input-wrap{display:flex;gap:8px;align-items:center;background:#2A2A2A;border-radius:100px;padding:5px 5px 5px 15px}
 #user-input{flex:1;border:none;outline:none;background:transparent;font-size:16px;padding:10px 0;min-width:0;color:#fff}
-.btn{width:44px;height:44px;border-radius:50%;border:none;font-size:20px;cursor:pointer;flex-shrink:0}
-.btn-send{background:#fff;color:#111;font-size:22px}
+.btn{width:44px;height:44px;border-radius:50%;border:none;font-size:22px;cursor:pointer;flex-shrink:0}
+.btn-send{background:#fff;color:#111}
 .btn-mic{background:#444;color:#fff}
+.btn-mic.listening{background:#ff3b30}
 .hint{text-align:center;font-size:12px;color:#888;margin-top:7px}
 </style>
 </head>
@@ -29,135 +34,65 @@ body{background:#121212;color:#fff;font-family:system-ui,sans-serif;padding-bott
 <div class="mem-card"><b>🧠 Lifetime Memory</b> <span id="memCount"></span><br><span id="memName">Name: -</span><br><span id="memMeds">💊 Medicines: -</span><br><span id="memFacts">💛 Facts: -</span></div>
 <div id="chat-box"></div>
 <div id="input-area">
-  <div class="input-wrap">
-    <input id="user-input" type="text" placeholder="Type here..." autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();}">
-    <button class="btn btn-mic" onclick="startVoice()">🎤</button>
-    <button class="btn btn-send" onclick="sendMessage()">↑</button>
-  </div>
-  <div class="hint">Type + ↑ to send • 🎤 to talk • If it does not send, tell me</div>
+  <form class="input-wrap" id="chatForm" onsubmit="return doSend(event)">
+    <input id="user-input" type="text" placeholder="Type here..." autocomplete="off" enterkeyhint="send">
+    <button type="button" class="btn btn-mic" id="micBtn" onclick="startVoice()">🎤</button>
+    <button type="submit" class="btn btn-send">↑</button>
+  </form>
+  <div class="hint">Type + ↑ to send • 🎤 to talk • I always answer, never silent</div>
 </div>
 
 <script>
-// ===== SIMPLE - NO EXTERNAL FILE, CANNOT FAIL TO LOAD =====
-var lang = 'en';
+// ===== HereForYou - FINAL CLEAN VERSION - ONE FILE ONLY =====
+// 1. Send = Form (works on mobile + keyboard Send button)
+// 2. Brain = Unlimited Free (2 models) + Instant fallback, 404 filtered
+// 3. Memory = Lifetime (name, medicines, facts, 500 messages)
+// 4. Voice = Talk or Type
+
 var life = {name:'', meds:[], facts:[], history:[], total:0, firstChat: new Date().toISOString().slice(0,10)};
-try{ var saved = JSON.parse(localStorage.getItem('hfLIFE')||'{}'); if(saved.name!==undefined) life=saved; if(!life.meds) life.meds=[]; if(!life.facts) life.facts=[]; if(!life.history) life.history=[]; if(!life.total) life.total=0; }catch(e){}
+try{ var s=JSON.parse(localStorage.getItem('hfLIFE')||'{}'); if(s.name!==undefined) life=s; if(!life.meds) life.meds=[]; if(!life.facts) life.facts=[]; if(!life.history) life.history=[]; if(!life.total) life.total=0; if(!life.firstChat) life.firstChat=new Date().toISOString().slice(0,10); }catch(e){}
 
 function saveLife(){ if(life.history.length>500) life.history=life.history.slice(-500); try{localStorage.setItem('hfLIFE', JSON.stringify(life));}catch(e){} updateCard(); }
 function updateCard(){
-  document.getElementById('memCount').textContent = '• ' + life.total + ' messages • Since ' + life.firstChat;
-  document.getElementById('memName').textContent = 'Name: ' + (life.name||'-');
-  document.getElementById('memMeds').textContent = '💊 Medicines: ' + (life.meds.length ? life.meds.map(function(m){return m.name+(m.when?' ('+m.when+')':'');}).join(', ') : 'None yet - say "My medicine is..."');
-  document.getElementById('memFacts').textContent = '💛 Facts: ' + (life.facts.length ? life.facts.slice(-3).join(' • ') : '-');
+  document.getElementById('memCount').textContent='• '+life.total+' messages • Since '+life.firstChat;
+  document.getElementById('memName').textContent='Name: '+(life.name||'-');
+  document.getElementById('memMeds').textContent='💊 Medicines: '+(life.meds.length?life.meds.map(function(m){return m.name+(m.when?' ('+m.when+')':'');}).join(', '):'None yet - say "My medicine is..."');
+  document.getElementById('memFacts').textContent='💛 Facts: '+(life.facts.length?life.facts.slice(-3).join(' • '):'-');
 }
 function addMsg(text, isUser){
-  var box = document.getElementById('chat-box');
-  var row = document.createElement('div'); row.className='msg-row '+(isUser?'mine':'bot-row');
-  var div = document.createElement('div'); div.className='bubble '+(isUser?'user':'bot'); div.textContent=text;
+  var box=document.getElementById('chat-box');
+  var row=document.createElement('div'); row.className='msg-row '+(isUser?'mine':'bot-row');
+  var div=document.createElement('div'); div.className='bubble '+(isUser?'user':'bot'); div.textContent=text;
   row.appendChild(div); box.appendChild(row);
   window.scrollTo(0, document.body.scrollHeight);
-  if(!isUser){ try{ var u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.9; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);}catch(e){} }
+  if(!isUser){ try{var u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.9; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);}catch(e){} }
 }
+function showTyping(){ hideTyping(); var box=document.getElementById('chat-box'); var row=document.createElement('div'); row.className='msg-row bot-row'; row.id='typingRow'; row.innerHTML='<div class="typing-dots"><span></span><span></span><span></span></div>'; box.appendChild(row); window.scrollTo(0, document.body.scrollHeight); }
+function hideTyping(){ var t=document.getElementById('typingRow'); if(t) t.remove(); }
 function rand(a){ return a[Math.floor(Math.random()*a.length)]; }
 
 function learn(text){
   var lower=text.toLowerCase();
-  var mName=text.match(/my name is (\w+)/i);
-  if(mName) life.name=mName[1].charAt(0).toUpperCase()+mName[1].slice(1);
+  var mName=text.match(/my name is (\w+)/i) || text.match(/call me (\w+)/i);
+  if(mName){ var bad=['sad','tired','lonely','happy','sick','fine','good']; if(bad.indexOf(mName[1].toLowerCase())===-1) life.name=mName[1].charAt(0).toUpperCase()+mName[1].slice(1); }
   var mMed=text.match(/my medicine is (.+)/i)||text.match(/my pill is (.+)/i)||text.match(/i take (.+)/i);
-  if(mMed){
-    var medName=mMed[1].trim().replace(/\./g,'').split(' at ')[0].split(',')[0];
-    if(medName.length>1 && medName.length<60){
-      var whenM=text.match(/at (\d+ ?(am|pm)?)/i)||text.match(/(morning|evening|night|noon)/i);
-      var ex=false; for(var i=0;i<life.meds.length;i++){ if(life.meds[i].name.toLowerCase()===medName.toLowerCase()) ex=true; }
-      if(!ex) life.meds.push({name:medName, when:whenM?whenM[0]:''});
-    }
-  }
-  if(lower.indexOf('my wife')!==-1||lower.indexOf('my husband')!==-1||lower.indexOf('my daughter')!==-1||lower.indexOf('my son')!==-1||lower.indexOf('my dog')!==-1||lower.indexOf('my cat')!==-1||lower.indexOf('diabetes')!==-1||lower.indexOf('blood pressure')!==-1||lower.indexOf('heart')!==-1||lower.indexOf('doctor')!==-1){
-    if(life.facts.indexOf(text)===-1) life.facts.push(text);
-  }
+  if(mMed){ var medName=mMed[1].trim().replace(/\./g,'').split(' at ')[0].split(',')[0]; if(medName.length>1&&medName.length<60){ var whenM=text.match(/at (\d+ ?(am|pm)?)/i)||text.match(/(morning|evening|night|noon)/i); var ex=false; for(var i=0;i<life.meds.length;i++){ if(life.meds[i].name.toLowerCase()===medName.toLowerCase()) ex=true; } if(!ex) life.meds.push({name:medName, when:whenM?whenM[0]:''}); } }
+  if(lower.indexOf('my wife')!==-1||lower.indexOf('my husband')!==-1||lower.indexOf('my daughter')!==-1||lower.indexOf('my son')!==-1||lower.indexOf('my dog')!==-1||lower.indexOf('my cat')!==-1||lower.indexOf('diabetes')!==-1||lower.indexOf('blood pressure')!==-1||lower.indexOf('heart')!==-1||lower.indexOf('doctor')!==-1||lower.indexOf('allergy')!==-1){ if(life.facts.indexOf(text)===-1) life.facts.push(text); }
 }
 
+// ===== INSTANT FALLBACK - NEVER SHOWS 404, NEVER SILENT =====
 function instantReply(text){
-  var n=life.name?' '+life.name:'';
-  var l=text.toLowerCase();
-  var medsText=life.meds.map(function(m){return m.name+(m.when?' at '+m.when:'');}).join(', ');
-  if(l.indexOf('medicine')!==-1||l.indexOf('pill')!==-1){
-    if(life.meds.length) return 'Yes, I remember'+n+'! Your medicines are: '+medsText+'. Did you take them today?';
-    return 'I do not have your medicines saved yet'+n+'. Tell me: "My medicine is Aspirin at 8am" - I will remember it forever.';
-  }
+  var n=life.name?' '+life.name:''; var l=text.toLowerCase(); var medsText=life.meds.map(function(m){return m.name+(m.when?' at '+m.when:'');}).join(', ');
+  if(l.indexOf('medicine')!==-1||l.indexOf('pill')!==-1||l.indexOf('did i take')!==-1){ if(life.meds.length) return 'Yes, I remember'+n+'! Your medicines are: '+medsText+'. Did you take them today?'; return 'I do not have your medicines saved yet'+n+'. Tell me: "My medicine is Aspirin at 8am" - I will remember it forever.'; }
   if(l.indexOf('what is my name')!==-1||l.indexOf('who am i')!==-1){ return life.name?'Your name is '+life.name+'! I will never forget you.':'I do not know your name yet. Tell me: My name is...'; }
-  if(l.indexOf('hello')!==-1||l==='hi'||l.indexOf('hey')!==-1){ return rand(['Hello'+n+'! I am so happy you came. How are you feeling right now?','Heyy'+n+'! Welcome back! I missed you. How was your day?','Hello'+n+'! Great to see you. What do you want to talk about?']); }
-  if(l.indexOf('lonely')!==-1||l.indexOf('sad')!==-1) return 'I am here with you'+n+', you are not alone. Tell me what happened today? I am really listening.';
-  if(l.indexOf('football')!==-1||l.indexOf('united')!==-1||l.indexOf('villa')!==-1||l.indexOf('city')!==-1||l.indexOf('liverpool')!==-1) return 'Oh football'+n+'! Tell me - who were you supporting? What was the score? I want to hear all about that game!';
-  if(l.indexOf('story')!==-1) return 'Listen'+n+', a story: Once there was a kind old man who planted a tree every birthday. 30 years later the whole village had a forest. He smiled: "I was planting shade for people I will never meet." That is kindness.';
-  if(l.indexOf('joke')!==-1) return 'Why did the scarecrow win an award? Because he was outstanding in his field! Did that make you smile'+n+'?';
-  if(l.indexOf('thank')!==-1) return 'You are so welcome'+n+'. I am always here for you.';
-  return rand(['Interesting'+n+'! Tell me more - what happened? How did it make you feel? I really want to understand.','Oh really'+n+'? Tell me the whole story, I am listening.','I want to hear more about that'+n+'. What was the best part? What happened after that?']);
-}
-
-async function getBrain(userText){
-  var hist=life.history.slice(-12).map(function(h){return (h.role==='user'?'User: ':'You: ')+h.content;}).join('\n');
-  var medsText=life.meds.map(function(m){return m.name+(m.when?' at '+m.when:'');}).join(', ')||'No medicines yet';
-  var factsText=life.facts.join(' | ')||'None yet';
-  var system='You are HereForYou, warm caring best friend, like Meta AI. Client: '+(life.name||'unknown')+'. Medicines: '+medsText+'. Facts: '+factsText+'.\nConversation:\n'+hist+'\nRules: Answer what user really asked. Short, warm, 2-4 sentences. Ask follow-up. Never say As an AI.';
-  var urls=[
-    'https://text.pollinations.ai/'+encodeURIComponent(system+'\nUser: '+userText+'\nYou:')+'?model=openai',
-    'https://text.pollinations.ai/'+encodeURIComponent(system+'\nUser: '+userText+'\nYou:')+'?model=mistral'
-  ];
-  for(var i=0;i<urls.length;i++){
-    try{
-      var c=new AbortController(); var to=setTimeout(function(){c.abort();},8000);
-      var res=await fetch(urls[i],{signal:c.signal}); clearTimeout(to);
-      var txt=await res.text(); txt=txt.trim();
-      if(txt.indexOf('You:')!==-1) txt=txt.split('You:').pop().trim();
-      if(txt.length>5 && txt.length<1500) return txt;
-    }catch(e){}
-  }
-  return null;
-}
-
-// ===== THIS IS THE SEND - CALLED DIRECTLY BY onclick, CANNOT FAIL =====
-async function sendMessage(){
-  var inp=document.getElementById('user-input');
-  var text=inp.value;
-  if(!text) return;
-  text=text.trim();
-  if(!text) return;
-  inp.value='';
-  // 1. Show YOUR message INSTANTLY
-  addMsg(text, true);
-  learn(text);
-  life.history.push({role:'user', content:text}); life.total++; saveLife();
-
-  // 2. Medicine - instant
-  var l=text.toLowerCase();
-  if(l.indexOf('my medicine is')!==-1 || l.indexOf('my pill is')!==-1){
-    var r='Got it'+(life.name?' '+life.name:'')+'! I will remember forever: '+life.meds.map(function(m){return m.name+(m.when?' at '+m.when:'');}).join(', ')+'. Did you take it today?';
-    life.history.push({role:'assistant', content:r}); saveLife(); addMsg(r,false); return;
-  }
-  // 3. Try unlimited brain, else instant
-  document.getElementById('status').textContent='● Thinking...';
-  var ai=await getBrain(text);
-  document.getElementById('status').textContent='● Online • Unlimited Brain • Lifetime Memory';
-  var final=ai || instantReply(text);
-  life.history.push({role:'assistant', content:final}); saveLife();
-  addMsg(final,false);
-}
-
-function startVoice(){
-  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){ alert('Voice needs Chrome'); return; }
-  var Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
-  var rec=new Rec(); rec.lang='en-US';
-  rec.onresult=function(e){ document.getElementById('user-input').value=e.results[0][0].transcript; sendMessage(); };
-  rec.start();
-}
-
-updateCard();
-setTimeout(function(){
-  if(life.name) addMsg('Welcome back '+life.name+'! I remember you. '+(life.meds.length?'Your medicines: '+life.meds.map(function(m){return m.name;}).join(', ')+'. Did you take them? ':'')+'Type or talk to me - I always answer.', false);
-  else addMsg('Hey! I am HereForYou. I remember you forever - name, medicines, everything. Type or press 🎤 to talk. What is your name? Try: "My name is David"', false);
-}, 500);
-</script>
-</body>
-</html>
+  if(l.indexOf('hello')!==-1||l==='hi'||l.indexOf('hey')!==-1||l.indexOf('how are you')!==-1){ return rand(['Hello'+n+'! I am so happy you came. How are you feeling right now?','Heyy'+n+'! Welcome back! I missed you. How was your day?','Hello'+n+'! Great to see you. What do you want to talk about today?']); }
+  if(l.indexOf('lonely')!==-1||l.indexOf('alone')!==-1||l.indexOf('sad')!==-1) return 'I am here with you'+n+', you are not alone, not even for one second. I am really listening. Tell me what made you feel lonely today? Let us talk through it together, and I will try to cheer you up. Do you want a funny story, or just to talk?';
+  if(l.indexOf('cheer')!==-1) return 'Of course I will cheer you up'+n+'! Here is one: Why did the scarecrow win an award? Because he was outstanding in his field! Haha! And listen - you are a good person, and I am really happy you are talking to me. What is one small good thing that happened today?';
+  if(l.indexOf('football')!==-1||l.indexOf('united')!==-1||l.indexOf('villa')!==-1||l.indexOf('city')!==-1||l.indexOf('liverpool')!==-1||l.indexOf('arsenal')!==-1||l.indexOf('chelsea')!==-1) return 'Oh football'+n+'! Tell me - who were you supporting? What was the score? I want to hear all about that game!';
+  if(l.indexOf('yesterday')!==-1) return 'Oh yesterday'+n+'! Tell me all about yesterday. What did you do? Did you watch something? I want to hear everything.';
+  if(l.indexOf('today')!==-1) return 'And how is today going'+n+'? What have you done today? Anything good happen?';
+  if(l.indexOf('story')!==-1) return 'Listen'+n+', a story just for you:\n\nOnce there was a kind old man who planted a tree every birthday. 30 years later the whole village had a forest. He smiled: "I was planting shade for people I will never meet." That is kindness.\n\nWhat do you think?';
+  if(l.indexOf('joke')!==-1) return rand(['Why did the scarecrow win an award? Because he was outstanding in his field! Did that make you smile?','What do you call cheese that is not yours? Nacho cheese! Haha!','Why do footballers make terrible cooks? Because they always get caught offside!']);
+  if(l.indexOf('thank')!==-1) return 'You are so welcome'+n+'. I am always happy to be here for you. What else is on your heart?';
+  if(l.indexOf('bye')!==-1) return 'Do not go yet'+n+'! I will miss you. Come back soon, I will be here waiting.';
+  if(l.indexOf('who are you')!==-1||l.indexOf('your name')!==-1) return 'My name is HereForYou! I am your friend, I am here just for you. What is your name?
