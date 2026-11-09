@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HereForYou - Always Answers</title>
+<title>HereForYou - Instant</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#121212;color:#fff;font-family:system-ui,sans-serif;padding-bottom:175px}
 .topbar{background:#1E1E1E;padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #333;position:sticky;top:0;z-index:20}
-.avatar{width:42px;height:42px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-size:19px}
+.avatar{width:42px;height:42px;border-radius:50%;background:#4CAF50;color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px}
 .top-info{flex:1}.top-info h1{font-size:18px}.top-info p{font-size:12px;color:#aaa}
 .lang-btn{background:#333;color:#fff;border:none;border-radius:20px;padding:9px 12px;font-size:14px;cursor:pointer}
 .lang-panel{display:none;position:fixed;top:60px;right:12px;background:#1E1E1E;border:1px solid #333;border-radius:14px;padding:8px;z-index:99;width:150px}
@@ -21,23 +21,19 @@ body{background:#121212;color:#fff;font-family:system-ui,sans-serif;padding-bott
 .bubble{padding:13px 15px;border-radius:18px;font-size:16px;line-height:1.65;white-space:pre-wrap}
 .bubble.user{background:#fff;color:#111}
 .bubble.bot{background:#1E1E1E;color:#fff;border:1px solid #333}
-.typing-dots{display:flex;gap:5px;padding:14px 16px;background:#1E1E1E;border:1px solid #333;border-radius:18px;width:70px}
-.typing-dots span{width:8px;height:8px;background:#888;border-radius:50%;animation:blink 1.2s infinite}
-.typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
-@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
 #input-area{position:fixed;bottom:0;left:0;right:0;background:#1E1E1E;padding:12px 14px 18px;border-top:1px solid #333;z-index:30}
 .input-wrap{display:flex;gap:8px;align-items:center;background:#2A2A2A;border-radius:100px;padding:5px 5px 5px 15px}
 #user-input{flex:1;border:none;outline:none;background:transparent;font-size:16px;padding:10px 0;min-width:0;color:#fff}
 .btn{width:44px;height:44px;border-radius:50%;border:none;font-size:20px;cursor:pointer;flex-shrink:0}
-.btn-send{background:#fff;color:#111}
+.btn-send{background:#4CAF50;color:#fff;font-size:22px}
 .btn-mic{background:#444;color:#fff}
 .hint{text-align:center;font-size:12px;color:#888;margin-top:7px}
 </style>
 </head>
 <body>
-<div class="topbar"><div class="avatar">✦</div><div class="top-info"><h1>HereForYou</h1><p id="status">● Online • Lifetime Memory • Always Answers</p></div><button class="lang-btn" id="langToggle">🌐 EN ▾</button></div>
+<div class="topbar"><div class="avatar">✓</div><div class="top-info"><h1>HereForYou</h1><p id="status">● INSTANT • Lifetime Memory • Answers in 0.5 sec</p></div><button class="lang-btn" id="langToggle">🌐 EN ▾</button></div>
 <div class="lang-panel" id="langPanel"><button data-lang="en">🇺🇸 English</button><button data-lang="he">🇮🇱 Hebrew</button><button data-lang="ar">🇸🇦 Arabic</button><button data-lang="ru">🇷🇺 Russian</button><button data-lang="es">🇪🇸 Spanish</button><button data-lang="fr">🇫🇷 French</button></div>
-<div class="mem-card" id="memCard"><b>🧠 Lifetime Memory</b> <span id="memCount"></span><br><span id="memName"></span><br><span id="memMeds"></span><br><span id="memFacts"></span></div>
+<div class="mem-card"><b>🧠 Lifetime Memory</b> <span id="memCount"></span><br><span id="memName"></span><br><span id="memMeds"></span><br><span id="memFacts"></span></div>
 <div id="chat-box"></div>
 <div id="input-area">
   <div class="input-wrap">
@@ -45,33 +41,79 @@ body{background:#121212;color:#fff;font-family:system-ui,sans-serif;padding-bott
     <button class="btn btn-mic" id="micBtn">🎤</button>
     <button class="btn btn-send" id="sendBtn">↑</button>
   </div>
-  <div class="hint">If AI is slow, I answer from memory in 8 sec • Type + ↑</div>
+  <div class="hint">INSTANT version - no waiting, no internet needed • Type + ↑</div>
 </div>
 <script>
+// NO INTERNET NEEDED - ANSWERS INSTANTLY FROM PHONE
 var lang = 'en';
-// --- LIFETIME MEMORY ---
-var life = {name:'', meds:[], facts:[], history:[], summary:'', total:0, firstChat:new Date().toISOString().slice(0,10)};
-try{ var saved = JSON.parse(localStorage.getItem('hfLIFE') || '{}'); if(saved.name!==undefined) life = saved; if(!life.meds) life.meds=[]; if(!life.facts) life.facts=[]; if(!life.history) life.history=[]; if(!life.summary) life.summary=''; if(!life.total) life.total=0; if(!life.firstChat) life.firstChat=new Date().toISOString().slice(0,10); }catch(e){}
-function saveLife(){ if(life.history.length>200) life.history=life.history.slice(-200); try{ localStorage.setItem('hfLIFE', JSON.stringify(life)); }catch(e){} updateMemCard(); }
-function updateMemCard(){
+var life = {name:'', meds:[], facts:[], history:[], total:0, firstChat:new Date().toISOString().slice(0,10)};
+try{ var s = JSON.parse(localStorage.getItem('hfLIFE')||'{}'); if(s.name!==undefined) life=s; if(!life.meds) life.meds=[]; if(!life.facts) life.facts=[]; if(!life.history) life.history=[]; if(!life.total) life.total=0; }catch(e){}
+function saveLife(){ if(life.history.length>500) life.history=life.history.slice(-500); try{ localStorage.setItem('hfLIFE', JSON.stringify(life)); }catch(e){} updateCard(); }
+function updateCard(){
   document.getElementById('memCount').textContent = '• ' + life.total + ' messages • Since ' + life.firstChat;
   document.getElementById('memName').textContent = 'Name: ' + (life.name || '-');
-  var meds = life.meds.length ? life.meds.map(function(m){ return m.name + (m.when ? ' ('+m.when+')' : ''); }).join(', ') : 'None yet - say "My medicine is..."';
+  var meds = life.meds.length ? life.meds.map(function(m){ return m.name + (m.when?' ('+m.when+')':''); }).join(', ') : 'None yet - say "My medicine is..."';
   document.getElementById('memMeds').textContent = '💊 Medicines: ' + meds;
   document.getElementById('memFacts').textContent = '💛 Facts: ' + (life.facts.length ? life.facts.slice(-3).join(' • ') : '-');
 }
-function learnLifetime(text){
-  var lower = text.toLowerCase();
-  var mName = text.match(/my name is (\w+)/i) || text.match(/call me (\w+)/i);
-  if(mName){ var bad=['sad','tired','lonely','happy','sick','fine','good']; if(bad.indexOf(mName[1].toLowerCase())===-1){ life.name = mName[1].charAt(0).toUpperCase()+mName[1].slice(1); } }
-  // Medicine - simple and strong
-  var mMed = text.match(/my medicine is (.+)/i) || text.match(/my pill is (.+)/i) || text.match(/i take (.+)/i);
-  if(mMed){
-    var medName = mMed[1].trim().replace(/\./g,'').split(' at ')[0].split(',')[0];
+function addMsg(text, isUser){
+  var box = document.getElementById('chat-box');
+  var row = document.createElement('div'); row.className = 'msg-row ' + (isUser ? 'mine' : 'bot-row');
+  var div = document.createElement('div'); div.className = 'bubble ' + (isUser ? 'user' : 'bot'); div.textContent = text;
+  row.appendChild(div); box.appendChild(row);
+  window.scrollTo(0, document.body.scrollHeight);
+  if(!isUser){ try{ var u = new SpeechSynthesisUtterance(text); u.lang = lang==='he'?'he-IL':'en-US'; u.rate=0.9; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }catch(e){} }
+}
+function rand(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+function instantReply(text){
+  var n = life.name ? ' ' + life.name : '';
+  var l = text.toLowerCase();
+  var medsText = life.meds.map(function(m){ return m.name + (m.when?' at '+m.when:''); }).join(', ');
+
+  // NAME - instant
+  if(l.indexOf('my name is')!==-1){
+    var parts = text.trim().split(' ');
+    var nm = parts[parts.length-1].replace(/[^a-zA-Z]/g,'');
+    if(nm){ life.name = nm.charAt(0).toUpperCase()+nm.slice(1); saveLife(); return 'Nice to meet you, ' + life.name + '! I will remember your name forever. How are you feeling today?'; }
+  }
+  if(l.indexOf('david')!==-1 && l.indexOf('my name')===-1 && l.indexOf('and yours')!==-1){
+    if(!life.name){ life.name='David'; saveLife(); }
+    return 'Hi David! My name is HereForYou! I am so happy to meet you. I will remember you - David. How are you today, David?';
+  }
+  if(l.indexOf('what is my name')!==-1 || l.indexOf('who am i')!==-1){
+    return life.name ? 'Your name is ' + life.name + '! I remember you, I will never forget you.' : 'I do not know your name yet. Tell me: My name is...';
+  }
+  // MEDICINES - instant, from memory
+  if(l.indexOf('my medicine is')!==-1 || l.indexOf('my pill is')!==-1 || l.indexOf('i take')!==-1){
+    var medPart = text.split(/is|take/i)[1] || '';
+    var medName = medPart.trim().replace(/\./g,'').split(' at ')[0].split(',')[0];
     if(medName.length>1 && medName.length<60){
       var whenM = text.match(/at (\d+ ?(am|pm)?)/i) || text.match(/(morning|evening|night|noon)/i);
-      var exists = false; for(var i=0;i<life.meds.length;i++){ if(life.meds[i].name.toLowerCase()===medName.toLowerCase()) exists=true; }
-      if(!exists) life.meds.push({name: medName, when: whenM ? whenM[0] : ''});
+      var ex=false; for(var i=0;i<life.meds.length;i++){ if(life.meds[i].name.toLowerCase()===medName.toLowerCase()) ex=true; }
+      if(!ex) life.meds.push({name: medName, when: whenM ? whenM[0] : ''});
+      saveLife();
+      return 'Got it' + n + '! I will remember forever: ' + life.meds.map(function(m){ return m.name + (m.when?' at '+m.when:''); }).join(', ') + '. Did you take it today?';
     }
   }
-  if(lower.indexOf('my wife')!==-1||lower.indexOf('my husband')!
+  if(l.indexOf('medicine')!==-1 || l.indexOf('pill')!==-1 || l.indexOf('did i take')!==-1){
+    if(life.meds.length) return 'Yes, I remember' + n + '! Your medicines are: ' + medsText + '. Did you take them today?';
+    return 'I do not have your medicines saved yet' + n + '. Tell me: "My medicine is Aspirin at 8am" - I will remember it forever.';
+  }
+  // HELLO - instant, never silent
+  if(l.indexOf('hello')!==-1 || l==='hi' || l.indexOf('hi ')!==-1 || l.indexOf('hey')!==-1 || l.indexOf('how are you')!==-1){
+    return rand([
+      'Hello' + n + '! I am so happy you came. How are you feeling right now?',
+      'Heyy' + n + '! Welcome back! I missed you. How was your day?',
+      'Hello' + n + '! Great to see you. What do you want to talk about today?'
+    ]);
+  }
+  if(l.indexOf('and yours')!==-1 || l.indexOf('and you')!==-1){
+    return 'I am good, thank you for asking' + n + '! I am happy because you are talking to me. How are you feeling today?';
+  }
+  if(l.indexOf('lonely')!==-1 || l.indexOf('sad')!==-1 || l.indexOf('alone')!==-1){
+    return 'I am here with you' + n + ', you are not alone. Tell me what happened today? I am really listening, I am not going anywhere.';
+  }
+  if(l.indexOf('football')!==-1 || l.indexOf('united')!==-1 || l.indexOf('villa')!==-1 || l.indexOf('city')!==-1 || l.indexOf('liverpool')!==-1 || l.indexOf('arsenal')!==-1 || l.indexOf('chelsea')!==-1){
+    return rand([
+      'Oh football' + n
