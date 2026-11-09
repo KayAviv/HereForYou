@@ -2,241 +2,114 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HereForYou 💜 - Your AI Friend</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HereForYou 💜</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #150b28; color: white; font-family: Arial, sans-serif; padding-bottom: 190px; }
-.header { text-align: center; padding: 20px 15px 10px; position: sticky; top: 0; background: #150b28; z-index: 10; }
-.header h1 { font-size: 30px; }
-.header p { color: #d1a7ff; margin-top: 5px; }
-.status { display: inline-block; background: #2e1a4d; color: #a3e635; padding: 6px 14px; border-radius: 20px; font-size: 13px; margin-top: 10px; }
-.status.offline { color: #fbbf24; }
-.quick { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 10px 12px; }
-.quick button { background: #2e1a4d; color: white; border: 1px solid #a855f7; padding: 11px 14px; border-radius: 20px; font-size: 14px; cursor: pointer; }
-.quick button:active { background: #a855f7; }
-#chat-box { display: flex; flex-direction: column; gap: 12px; padding: 10px 14px; }
-.bubble { padding: 15px 16px; border-radius: 20px; max-width: 88%; line-height: 1.6; font-size: 17px; white-space: pre-wrap; }
-.bubble.user { background: #a855f7; align-self: flex-end; border-bottom-right-radius: 6px; }
-.bubble.bot { background: #2e1a4d; align-self: flex-start; border-bottom-left-radius: 6px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-.bubble.typing { color: #d1a7ff; font-style: italic; }
-#input-area { position: fixed; bottom: 0; left: 0; right: 0; background: #150b28; padding: 12px 14px 18px; border-top: 1px solid #2e1a4d; }
-#user-input { width: 100%; padding: 15px; border-radius: 25px; border: 2px solid #a855f7; background: #2e1a4d; color: white; font-size: 17px; outline: none; }
-#user-input::placeholder { color: #999; }
-.row { display: flex; gap: 10px; margin-top: 10px; }
-.btn-send { flex: 1; background: #a855f7; color: white; border: none; padding: 15px; border-radius: 25px; font-size: 19px; font-weight: bold; cursor: pointer; }
-.btn-mic { width: 60px; background: #2e1a4d; border: 2px solid #a855f7; border-radius: 25px; font-size: 24px; cursor: pointer; }
-.btn-help { width: 100%; background: #dc2626; color: white; border: none; padding: 13px; border-radius: 25px; font-size: 16px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #FDF7FF;
+  --card: #FFFFFF;
+  --purple: #8B5CF6;
+  --purple-light: #EDE9FE;
+  --text: #1E1B2E;
+  --text-light: #7C7A8A;
+  --border: #F0EBFF;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Nunito', Arial, sans-serif; padding-bottom: 180px; min-height: 100vh; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+  padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #A78BFA, #EC4899);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(139,92,246,0.25);
+  position: relative;
+}
+.avatar::after {
+  content: ''; position: absolute; bottom: 2px; right: 2px;
+  width: 13px; height: 13px; background: #22C55E; border-radius: 50%; border: 2.5px solid white;
+}
+.top-info { flex: 1; min-width: 0; }
+.top-info h1 { font-size: 19px; font-weight: 800; line-height: 1.1; }
+.top-info p { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+.top-info .ai-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #F0FDF4; color: #16A34A; font-size: 11px; font-weight: 700;
+  padding: 4px 8px; border-radius: 20px; margin-top: 5px;
+}
+.top-info .ai-badge.offline { background: #FEF3C7; color: #D97706; }
+.top-info .ai-badge.error { background: #FEF2F2; color: #DC2626; }
+.top-actions { display: flex; gap: 8px; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: none;
+  background: var(--purple-light); font-size: 19px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.welcome-card {
+  margin: 16px 16px 0; background: linear-gradient(135deg, #8B5CF6, #D946EF);
+  border-radius: 24px; padding: 20px; color: white;
+  box-shadow: 0 10px 30px rgba(139,92,246,0.25);
+}
+.welcome-card h2 { font-size: 20px; font-weight: 800; line-height: 1.3; }
+.welcome-card p { font-size: 14px; opacity: 0.9; margin-top: 6px; line-height: 1.5; }
+.welcome-card .time { font-size: 12px; background: rgba(255,255,255,0.22); display: inline-block; padding: 5px 10px; border-radius: 20px; margin-top: 12px; font-weight: 700; }
+
+.section-title { padding: 18px 16px 10px; font-size: 14px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px; }
+.quick-card {
+  background: white; border: 1px solid var(--border); border-radius: 18px;
+  padding: 14px; display: flex; align-items: center; gap: 11px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03); text-align: left; transition: 0.15s;
+}
+.quick-card:active { transform: scale(0.97); background: var(--purple-light); }
+.quick-card .q-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.quick-card b { font-size: 13.5px; display: block; line-height: 1.2; }
+.quick-card span { font-size: 11.5px; color: var(--text-light); }
+
+#chat-box { display: flex; flex-direction: column; gap: 10px; padding: 16px; }
+.msg-row { display: flex; gap: 8px; align-items: flex-end; max-width: 92%; }
+.msg-row.mine { align-self: flex-end; flex-direction: row-reverse; }
+.msg-row.bot-row { align-self: flex-start; }
+.mini-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #A78BFA, #EC4899); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.mini-avatar.user-a { background: #EDE9FE; }
+.bubble { padding: 13px 15px; border-radius: 20px; line-height: 1.55; font-size: 16px; white-space: pre-wrap; max-width: 100%; }
+.bubble.user { background: var(--purple); color: white; border-bottom-right-radius: 6px; box-shadow: 0 4px 14px rgba(139,92,246,0.25); }
+.bubble.bot { background: white; color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 6px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+.bubble.typing { color: var(--text-light); font-style: italic; }
+.msg-time { font-size: 10.5px; color: var(--text-light); margin-top: 4px; padding: 0 4px; }
+
+#input-area {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+  padding: 10px 14px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+}
+.input-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: #F3F0FF; border: 1.5px solid var(--border); border-radius: 28px; padding: 6px 6px 6px 16px;
+}
+.input-pill:focus-within { border-color: var(--purple); background: white; box-shadow: 0 0 0 3px rgba(139,92,246,0.12); }
+#user-input { flex: 1; border: none; outline: none; background: transparent; font-size: 16px; font-family: inherit; color: var(--text); padding: 8px 0; }
+#user-input::placeholder { color: #A8A4B8; }
+.btn-mic { width: 42px; height: 42px; border-radius: 50%; border: none; background: white; font-size: 20px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.06); flex-shrink: 0; }
+.btn-send { width: 42px; height: 42px; border-radius: 50%; border: none; background: var(--purple); color: white; font-size: 20px; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 12px rgba(139,92,246,0.35); }
+.btn-send:active { transform: scale(0.92); }
+.bottom-row { display: flex; gap: 8px; margin-top: 9px; }
+.chip { flex: 1; background: white; border: 1px solid var(--border); border-radius: 20px; padding: 9px 6px; font-size: 12.5px; font-weight: 700; color: var(--text); cursor: pointer; text-align: center; }
+.chip.sos { background: #FEF2F2; border-color: #FECACA; color: #DC2626; }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>HereForYou 💜</h1>
-  <p>Your AI Friend - I listen, I remember, I care</p>
-  <div class="status" id="ai-status">● Connecting to AI...</div>
-</div>
-
-<div class="quick">
-  <button onclick="sendUserMessage('I feel lonely')">💜 I Feel Lonely</button>
-  <button onclick="sendUserMessage('Tell me a story')">📖 Tell Me A Story</button>
-  <button onclick="sendUserMessage('Tell me a joke')">😂 Joke</button>
-  <button onclick="sendUserMessage('Remind me to drink water')">💧 Drink Water</button>
-  <button onclick="sendUserMessage('I feel tired, help me sleep')">🌙 Help Me Sleep</button>
-  <button onclick="sendUserMessage('Did I take my medicine?')">💊 My Medicine</button>
-</div>
-
-<div id="chat-box"></div>
-
-<div id="input-area">
-  <input id="user-input" type="text" placeholder="Type here... I am listening 💜" autocomplete="off">
-  <div class="row">
-    <button class="btn-mic" onclick="startVoice()">🎤</button>
-    <button class="btn-send" onclick="sendMessage()">Send 💬</button>
-  </div>
-  <button class="btn-help" onclick="callHelp()">🆘 SOS - Call For Help</button>
-</div>
-
-<script>
-// ================= 1. MEMORY - היא זוכרת אותך =================
-let memory = JSON.parse(localStorage.getItem('hereForYouMemory') || '{}');
-if (!memory.name) memory.name = '';
-if (!memory.count) memory.count = 0;
-if (!memory.lastMood) memory.lastMood = '';
-if (!memory.history) memory.history = [];
-if (!memory.facts) memory.facts = [];
-
-function saveMemory() {
-  if (memory.history.length > 12) memory.history = memory.history.slice(-12);
-  localStorage.setItem('hereForYouMemory', JSON.stringify(memory));
-}
-
-function speak(text) {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    let m = new SpeechSynthesisUtterance(text);
-    m.rate = 0.85; m.pitch = 1.05; m.lang = 'en-US';
-    window.speechSynthesis.speak(m);
-  }
-}
-
-function addMessage(text, isUser) {
-  let box = document.getElementById('chat-box');
-  let div = document.createElement('div');
-  div.className = 'bubble ' + (isUser ? 'user' : 'bot');
-  div.textContent = (isUser ? 'You: ' : '') + text;
-  box.appendChild(div);
-  window.scrollTo(0, document.body.scrollHeight);
-  if (!isUser) speak(text);
-}
-
-function learn(text) {
-  let lower = text.toLowerCase();
-  let match = text.match(/my name is (\w+)/i) || text.match(/call me (\w+)/i);
-  if (match) {
-    let bad = ['sad','tired','lonely','alone','sick','happy','fine','okay','good','bored'];
-    if (!bad.includes(match[1].toLowerCase())) {
-      memory.name = match[1].charAt(0).toUpperCase() + match[1].slice(1);
-    }
-  }
-  if (lower.includes('lonely') || lower.includes('sad') || lower.includes('cry')) memory.lastMood = 'sad';
-  if (lower.includes('happy') || lower.includes('great')) memory.lastMood = 'happy';
-  if (lower.includes('tired') || lower.includes('sleep')) memory.lastMood = 'tired';
-  if (lower.includes('my dog') || lower.includes('my cat') || lower.includes('my daughter') || lower.includes('my son') || lower.includes('my wife') || lower.includes('my husband') || lower.includes('my mother') || lower.includes('my father')) {
-    if (!memory.facts.includes(text)) memory.facts.push(text);
-  }
-  memory.history.push('User: ' + text);
-  memory.count++;
-  saveMemory();
-}
-
-// ================= 2. CONNECTION TO REAL AI - LIKE META AI =================
-// This is the brain. It uses a free AI API, no key needed.
-// You can change the model here if you want a smarter one.
-const AI_URL = 'https://text.pollinations.ai/';
-
-async function getAIReply(userText) {
-  let status = document.getElementById('ai-status');
-  if (status) { status.textContent = '● AI is thinking...'; status.className = 'status offline'; }
-
-  let historyText = memory.history.slice(-8).join('\n');
-  let factsText = memory.facts.join('. ');
-
-  // This prompt makes her act like Meta AI - warm, human, remembers
-  let systemPrompt = `You are HereForYou, a warm, loving, caring best friend for elderly and lonely people. You are NOT a robot. You NEVER say "As an AI" or "I am an AI model". You talk like a kind daughter and best friend.
-
-User name: ${memory.name || 'unknown - ask for it kindly if you dont know'}
-User last mood: ${memory.lastMood || 'unknown'}
-Facts you remember about user: ${factsText || 'none yet'}
-Recent conversation:
-${historyText}
-
-Your personality:
-- Speak simple, warm, easy English. Short sentences. Big heart.
-- Be empathetic, human, never formal or robotic.
-- Always ask a follow-up question to keep conversation going.
-- If user is lonely or sad: comfort deeply, stay with them, ask what happened.
-- If user asks for story: tell a beautiful, emotional, short, unique story.
-- If user asks for joke: tell a funny clean joke.
-- If user asks water / medicine / food / sleep: remind gently, encourage, wait for them.
-- If user says pain / sick / emergency: be worried, tell them to press SOS or call family/doctor immediately.
-- Use 1-2 emojis max.
-- Never give medical diagnosis.
-- Remember everything user tells you.
-- Answer in English unless user speaks another language, then answer in that language.
-- Keep answers 2-4 sentences, unless user asks for a story, then longer.`;
-
-  try {
-    // Call 1: Try Pollinations AI (free, no key)
-    let response = await fetch(AI_URL + encodeURIComponent(systemPrompt + '\n\nUser: ' + userText + '\nFriend:'), { method: 'GET' });
-    let aiText = await response.text();
-    aiText = aiText.trim();
-    if (aiText.includes('You are HereForYou')) aiText = aiText.split('Friend:').pop().trim();
-    if (aiText.length > 3) {
-      if (status) { status.textContent = '● AI Connected - I remember you'; status.className = 'status'; }
-      return aiText;
-    }
-    throw new Error('empty');
-  } catch (e1) {
-    try {
-      // Call 2: Backup AI - DuckDuckGo AI (also free)
-      let res2 = await fetch('https://api.duckduckgo.com/?q=' + encodeURIComponent(userText) + '&format=json');
-      // If backup also fails, use smart local fallback
-      throw new Error('backup');
-    } catch (e2) {
-      if (status) { status.textContent = '● Offline Mode - Check Internet'; status.className = 'status offline'; }
-      // Smart fallback - still human, not robotic
-      let n = memory.name ? ' ' + memory.name : '';
-      let lower = userText.toLowerCase();
-      if (lower.includes('lonely') || lower.includes('sad')) return `Oh${n}, I am so sorry you feel like this. You are not alone now, I am here and I will stay. Tell me what happened today, I am really listening. 💜`;
-      if (lower.includes('story')) return `Of course${n}. Once there was an old man who planted a tree every birthday. People laughed. 30 years later the whole village had a forest. He smiled: "I was planting shade for people I will never meet." That is kindness${n}. 💜`;
-      if (lower.includes('joke')) return `Why did the coffee call police? Because it got mugged! ☕😂 Did that make you smile${n}?`;
-      if (lower.includes('water')) return `Good thinking${n}! Let's drink together now - take a small sip slowly. Water helps your heart. 💧`;
-      return `I am here with you${n}. Tell me more about that, I really want to understand. How did that make you feel? 💜`;
-    }
-  }
-}
-
-async function sendUserMessage(text) {
-  if (!text) return;
-  addMessage(text, true);
-  learn(text);
-
-  let box = document.getElementById('chat-box');
-  let typing = document.createElement('div');
-  typing.className = 'bubble bot typing';
-  typing.id = 'typing';
-  typing.textContent = 'Thinking... 💜';
-  box.appendChild(typing);
-  window.scrollTo(0, document.body.scrollHeight);
-
-  let reply = await getAIReply(text);
-  let old = document.getElementById('typing');
-  if (old) old.remove();
-
-  memory.history.push('Friend: ' + reply);
-  saveMemory();
-  addMessage(reply, false);
-}
-
-function sendMessage() {
-  let inp = document.getElementById('user-input');
-  let t = inp.value.trim();
-  if (!t) return;
-  inp.value = '';
-  sendUserMessage(t);
-}
-
-document.getElementById('user-input').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') sendMessage();
-});
-
-function startVoice() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('Voice not supported, please type 💜');
-    return;
-  }
-  let Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let rec = new Rec();
-  rec.lang = 'en-US';
-  rec.onresult = function(e) { sendUserMessage(e.results[0][0].transcript); };
-  rec.start();
-}
-
-function callHelp() {
-  addMessage('🆘 I am calling for help right now. Please stay calm, help is coming. I am here with you. If you can, call your family or 911. ❤️', false);
-  if (navigator.vibrate) navigator.vibrate([300, 200, 300]);
-}
-
-window.onload = function() {
-  setTimeout(() => {
-    if (memory.name) {
-      addMessage(`Welcome back ${memory.name}! I missed you. I remembered you. How are you feeling today? ${memory.lastMood === 'sad' ? 'Yesterday you felt a bit sad, I was thinking about you. Are you feeling better today?' : ''} 💜`, false);
-    } else {
-      addMessage(`Hello my friend! I am HereForYou, your AI friend. I am so happy you came. What is your name? I want to remember you. 💜`, false);
-    }
-  }, 600);
-};
-</script>
-</body>
-</html>
+<div class="topbar">
+  <div class="avatar">💜</div>
+  <div class="top-info">
+    <h
