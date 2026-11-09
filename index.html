@@ -3,59 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>HereForYou - AI Friend</title>
+<title>HereForYou - Endless AI</title>
 <meta name="color-scheme" content="light dark">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{ --bg:#F8F6F3; --card:#FFFFFF; --text:#1A1A1A; --sub:#6B6B6B; --border:#EDEBE8; --input:#F8F6F3; --user:#1A1A1A; --user-text:#FFFFFF; --accent:#7C3AED; }
-@media (prefers-color-scheme: dark){ :root{ --bg:#0F0F12; --card:#1E1E22; --text:#F5F5F5; --sub:#A0A0A0; --border:#2E2E33; --input:#1E1E22; --user:#FFFFFF; --user-text:#121212; --accent:#A78BFA; } }
+:root{ --bg:#F8F6F3; --card:#fff; --text:#1A1A1A; --sub:#6B6B6B; --border:#EDEBE8; --input:#F8F6F3; --user:#1A1A1A; --user-text:#fff; }
+@media (prefers-color-scheme: dark){ :root{ --bg:#0F0F12; --card:#1E1E22; --text:#F5F5F5; --sub:#A0A0A0; --border:#2E2E33; --input:#1E1E22; --user:#fff; --user-text:#121212; } }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--text);font-family:'Heebo',sans-serif;padding-bottom:170px;min-height:100vh}
 .topbar{position:sticky;top:0;z-index:20;background:var(--card);padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
-.avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#EC4899);color:white;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.top-info{flex:1}
-.top-info h1{font-size:18px;font-weight:800}
-.top-info p{font-size:12px;color:var(--sub);margin-top:1px}
+.avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#EC4899,#F59E0B);color:white;display:flex;align-items:center;justify-content:center;font-size:22px}
+.top-info{flex:1}.top-info h1{font-size:18px;font-weight:800}.top-info p{font-size:12px;color:var(--sub)}
 .dot{width:8px;height:8px;background:#22C55E;border-radius:50%;display:inline-block;margin-left:5px}
-.top-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:17px;cursor:pointer}
-.hero{padding:20px 18px 6px}
-.hero h2{font-size:27px;font-weight:800;line-height:1.2}
-.hero p{font-size:14px;color:var(--sub);margin-top:6px;line-height:1.5}
-.hero .badge{display:inline-block;background:var(--accent);color:white;font-size:11px;padding:4px 10px;border-radius:100px;margin-top:8px;font-weight:700}
 .voice-banner{margin:12px 18px 4px;background:var(--user);color:var(--user-text);border-radius:18px;padding:15px;display:flex;align-items:center;gap:12px;cursor:pointer}
-.voice-banner .v{width:46px;height:46px;background:var(--card);color:var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
-.voice-banner b{display:block;font-size:15px}
-.voice-banner span{font-size:12px;opacity:.7}
-.voice-banner.listening{background:#DC2626;color:white}
+.voice-banner .v{width:46px;height:46px;background:var(--card);color:var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px}
+.voice-banner b{display:block;font-size:15px}.voice-banner span{font-size:12px;opacity:.7}
+.voice-banner.listening{background:#DC2626;color:#fff}
 .lang-row{display:flex;gap:8px;padding:10px 18px 0;overflow-x:auto;scrollbar-width:none}
-.lang-row::-webkit-scrollbar{display:none}
 .lang-btn{white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:8px 13px;font-size:13px;cursor:pointer;color:var(--text)}
-.lang-btn.active{background:var(--user);color:var(--user-text);border-color:var(--user)}
+.lang-btn.active{background:var(--user);color:var(--user-text)}
 .pills{display:flex;gap:8px;padding:14px 18px 4px;overflow-x:auto;scrollbar-width:none}
-.pills::-webkit-scrollbar{display:none}
-.pill{white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:10px 15px;font-size:14px;cursor:pointer;color:var(--text);font-weight:500}
+.pill{white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:10px 15px;font-size:14px;cursor:pointer;color:var(--text)}
 #chat-box{display:flex;flex-direction:column;gap:12px;padding:18px}
-.msg-row{display:flex;max-width:88%}
-.msg-row.mine{align-self:flex-end}
-.msg-row.bot-row{align-self:flex-start}
+.msg-row{display:flex;max-width:88%}.msg-row.mine{align-self:flex-end}.msg-row.bot-row{align-self:flex-start}
 .bubble{padding:14px 16px;border-radius:20px;line-height:1.65;font-size:16px;white-space:pre-wrap}
 .bubble.user{background:var(--user);color:var(--user-text);border-bottom-left-radius:4px}
 .bubble.bot{background:var(--card);color:var(--text);border:1px solid var(--border);border-bottom-right-radius:4px}
 .msg-time{font-size:11px;color:var(--sub);margin-top:5px;padding:0 4px}
-.thinking{font-size:13px;color:var(--sub);padding:0 18px;font-style:italic}
 #input-area{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--card);padding:12px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--border)}
 .input-wrap{display:flex;align-items:center;gap:8px;background:var(--input);border-radius:100px;padding:4px 4px 4px 14px;border:1px solid var(--border)}
 #user-input{flex:1;border:none;outline:none;background:transparent;font-size:16px;font-family:inherit;padding:11px 0;color:var(--text);min-width:0}
-#user-input::placeholder{color:var(--sub)}
-.btn-mic{width:43px;height:43px;border-radius:50%;border:none;background:transparent;font-size:20px;cursor:pointer;flex-shrink:0}
+.btn-mic{width:43px;height:43px;border-radius:50%;border:none;background:transparent;font-size:20px;cursor:pointer}
 .btn-mic.listening{background:#DC2626}
-.btn-send{width:43px;height:43px;border-radius:50%;border:none;background:var(--user);color:var(--user-text);font-size:19px;cursor:pointer;flex-shrink:0}
+.btn-send{width:43px;height:43px;border-radius:50%;border:none;background:var(--user);color:var(--user-text);font-size:19px;cursor:pointer}
 .hint{text-align:center;font-size:12px;color:var(--sub);margin-top:7px}
 </style>
 </head>
 <body>
-<div class="topbar"><div class="avatar">✦</div><div class="top-info"><h1>HereForYou - AI</h1><p><span class="dot"></span>מחוברת • מוח מלא • טקסט + דיבור</p></div><button class="top-btn" onclick="clearChat()">↺</button><button class="top-btn" onclick="callHelp()">🆘</button></div>
-<div class="hero"><h2 id="welcomeTitle">שלום, אני כאן.</h2><p>אני חברה עם מוח מלא. אפשר לדבר איתי על הכל - חיים, משפחה, אוכל, כדורגל, סיפורים, בדיחות, חלומות. אני זוכרת אותך.</p><span class="badge">✦ AI מלא • זוכרת אותך • 6 שפות</span></div>
+<div class="topbar"><div class="avatar">∞</div><div class="top-info"><h1>HereForYou ∞ Endless AI</h1><p><span class="dot"></span>מוח אינסופי • לא נגמר אף פעם • טקסט + דיבור</p></div><button style="width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text)" onclick="clearChat()">↺</button></div>
+<div style="padding:18px 18px 0"><h2 style="font-size:26px">שלום, אני כאן. בלי סוף.</h2><p style="color:var(--sub);font-size:14px;margin-top:6px">אני מייצרת תשובה חדשה כל פעם. לא אותו משפט. אף פעם. תדבר איתי על הכל.</p><span style="display:inline-block;background:#7C3AED;color:white;font-size:11px;padding:4px 10px;border-radius:100px;margin-top:8px">∞ ENDLESS AI • מייצרת לבד • זוכרת אותך</span></div>
 <div class="voice-banner" id="voiceBanner" onclick="toggleVoiceMode()"><div class="v" id="voiceIcon">🎙️</div><div><b id="voiceTitle">לחץ כאן לדיבור - בלי להקליד!</b><span id="voiceSub">תדבר, אני אקשיב ואענה בקול</span></div></div>
 <div class="lang-row">
   <button class="lang-btn active" data-lang="he" onclick="setLang('he')">🇮🇱 עברית</button>
@@ -66,65 +52,39 @@ body{background:var(--bg);color:var(--text);font-family:'Heebo',sans-serif;paddi
   <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">🇫🇷 Français</button>
 </div>
 <div class="pills">
-  <button class="pill" onclick="sendUserMessage('I feel lonely')">💜 I feel lonely</button>
-  <button class="pill" onclick="sendUserMessage('Tell me a story')">📖 Story</button>
-  <button class="pill" onclick="sendUserMessage('Tell me a joke')">😂 Joke</button>
-  <button class="pill" onclick="sendUserMessage('Wanna go to play ball?')">⚽ Play ball</button>
-  <button class="pill" onclick="sendUserMessage('Help me sleep')">🌙 Sleep</button>
-  <button class="pill" onclick="sendUserMessage('Lets talk about life')">💭 Life</button>
-  <button class="pill" onclick="sendUserMessage('I need encouragement')">💪 Encourage me</button>
-  <button class="pill" onclick="sendUserMessage('Tell me something interesting')">✨ Surprise me</button>
+  <button class="pill" onclick="sendUserMessage('ספר לי סיפור')">📖 סיפור חדש כל פעם</button>
+  <button class="pill" onclick="sendUserMessage('ספר לי בדיחה')">😂 בדיחה חדשה כל פעם</button>
+  <button class="pill" onclick="sendUserMessage('ספר לי משהו מעניין')">✨ עובדה חדשה</button>
+  <button class="pill" onclick="sendUserMessage('בוא נשחק כדור')">⚽ כדור</button>
+  <button class="pill" onclick="sendUserMessage('אני מרגיש בודד')">💜 בודד</button>
+  <button class="pill" onclick="sendUserMessage('תעודד אותי')">💪 עידוד</button>
 </div>
 <div id="chat-box"></div>
-<div id="thinking" class="thinking" style="display:none">HereForYou מקלידה...</div>
-<div id="input-area">
-  <div class="input-wrap">
-    <input id="user-input" type="text" placeholder="כתוב כאן... או לחץ על 🎤 ודבר" autocomplete="off" enterkeyhint="send">
-    <button class="btn-mic" id="micBtn" onclick="startVoiceOnce()">🎤</button>
-    <button class="btn-send" id="sendBtn" onclick="sendMessage()">↑</button>
-  </div>
-  <div class="hint">✍️ כתיבה: כתוב ולחץ ↑ או Enter &nbsp;•&nbsp; 🎤 דיבור: לחץ על המיקרופון ודבר &nbsp;•&nbsp; 🟣 לחץ על הבאנר השחור למצב שיחה רציפה</div>
-</div>
+<div id="input-area"><div class="input-wrap"><input id="user-input" type="text" placeholder="כתוב כאן... או לחץ 🎤 ודבר - אני מייצרת תשובה חדשה" autocomplete="off" enterkeyhint="send"><button class="btn-mic" id="micBtn" onclick="startVoiceOnce()">🎤</button><button class="btn-send" id="sendBtn" onclick="sendMessage()">↑</button></div><div class="hint">∞ מוח אינסופי - כל תשובה נוצרת מחדש • ✍️ טקסט • 🎤 דיבור</div></div>
 <script>
-// ============ MEMORY - מוח שזוכר ============
-let memory = JSON.parse(localStorage.getItem('hereForYouAI_Full') || '{}');
+// ============ ENDLESS AI ENGINE ============
+let memory = JSON.parse(localStorage.getItem('hereForYouEndless') || '{}');
 if(!memory.name) memory.name='';
 if(!memory.lang) memory.lang='he';
 if(!memory.history) memory.history=[];
-if(!memory.facts) memory.facts=[];
 if(!memory.likes) memory.likes=[];
-if(!memory.used) memory.used=[];
+if(!memory.topic) memory.topic='';
 if(!memory.count) memory.count=0;
-function save(){ if(memory.history.length>40) memory.history=memory.history.slice(-40); localStorage.setItem('hereForYouAI_Full', JSON.stringify(memory)); }
+function save(){ localStorage.setItem('hereForYouEndless', JSON.stringify(memory)); }
 let voiceMode=false, isSpeaking=false, recognition=null;
 let langMap={en:'en-US',he:'he-IL',ar:'ar-SA',ru:'ru-RU',es:'es-ES',fr:'fr-FR'};
-function pick(arr){
-  let fresh = arr.filter(a=>!memory.used.includes(a));
-  if(fresh.length===0){ memory.used=[]; fresh=arr; }
-  let c = fresh[Math.floor(Math.random()*fresh.length)];
-  memory.used.push(c); if(memory.used.length>30) memory.used=memory.used.slice(-30);
-  save(); return c;
-}
+function R(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 function detectLang(t){
   if(/[\u0590-\u05FF]/.test(t)) return 'he';
   if(/[\u0600-\u06FF]/.test(t)) return 'ar';
   if(/[\u0400-\u04FF]/.test(t)) return 'ru';
-  let l=t.toLowerCase();
-  if(l.includes('hola')||l.includes('gracias')) return 'es';
-  if(l.includes('bonjour')||l.includes('merci')) return 'fr';
   return memory.lang||'he';
 }
-function setLang(l){
-  memory.lang=l; save();
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===l));
-  let m={en:"Great! Now I'll speak English with you. What do you want to talk about?",he:"מעולה! מעכשיו אני מדברת איתך בעברית. על מה אתה רוצה לדבר?",ar:"رائع! سأتحدث معك بالعربية الآن. عن ماذا تريد أن نتحدث؟",ru:"Отлично! Теперь я говорю по-русски. О чём поговорим?",es:"¡Genial! Ahora hablo español contigo. ¿De qué quieres hablar?",fr:"Super ! Je te parle en français maintenant. De quoi veux-tu parler ?"};
-  addMessage(m[l], false);
-}
+function setLang(l){ memory.lang=l; save(); document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===l)); addMessage(l==='he'?'מעולה! עכשיו בעברית. על מה נדבר?':l==='en'?"Great! Now in English. What do you want to talk about?":'מעולה! עכשיו בשפה שלך. על מה נדבר?', false); }
 function speak(text){
   if('speechSynthesis' in window){
     window.speechSynthesis.cancel();
-    let u=new SpeechSynthesisUtterance(text);
-    u.lang=langMap[memory.lang||'he']||'he-IL'; u.rate=0.9; u.pitch=1.05;
+    let u=new SpeechSynthesisUtterance(text); u.lang=langMap[memory.lang||'he']||'he-IL'; u.rate=0.9;
     u.onend=()=>{ isSpeaking=false; if(voiceMode) setTimeout(startListening, 400); };
     u.onerror=()=>{ isSpeaking=false; if(voiceMode) startListening(); };
     isSpeaking=true; window.speechSynthesis.speak(u);
@@ -136,7 +96,7 @@ function addMessage(text, isUser){
   let row=document.createElement('div'); row.className='msg-row '+(isUser?'mine':'bot-row');
   let wrap=document.createElement('div'); wrap.style.flex='1';
   let div=document.createElement('div'); div.className='bubble '+(isUser?'user':'bot'); div.textContent=text;
-  let time=document.createElement('div'); time.className='msg-time'; time.textContent=getTime()+' • '+(isUser?'אתה':'HereForYou AI');
+  let time=document.createElement('div'); time.className='msg-time'; time.textContent=getTime()+' • '+(isUser?'אתה':'HereForYou ∞');
   wrap.appendChild(div); wrap.appendChild(time); row.appendChild(wrap); box.appendChild(row);
   window.scrollTo(0, document.body.scrollHeight);
   if(!isUser) speak(text);
@@ -144,40 +104,138 @@ function addMessage(text, isUser){
 function learn(text){
   let lang=detectLang(text);
   if(lang!==memory.lang){ memory.lang=lang; document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang)); }
-  let lower=text.toLowerCase();
-  let m=text.match(/(?:my name is|i am|i'm|im|call me|קוראים לי|שמי|אני)\s+([a-z\u0590-\u05FF]+)/i);
-  if(m){
-    let cand=m[1];
-    if(cand && cand.length>1 && cand.length<15 && !['sad','tired','lonely','alone','happy','fine','okay','good','bored','here','עצוב','עייף','לבד','שמח'].includes(cand.toLowerCase())) memory.name=cand;
-  }
-  // לומדת מה אתה אוהב
-  if(lower.includes('i like')||lower.includes('i love')||lower.includes('אני אוהב')||lower.includes('אני אוהבת')||lower.includes('אוהב')){
-    if(!memory.likes.includes(text) && memory.likes.length<20) memory.likes.push(text);
-  }
-  if(lower.includes('my dog')||lower.includes('my cat')||lower.includes('my daughter')||lower.includes('my son')||lower.includes('הכלב שלי')||lower.includes('הבת שלי')||lower.includes('הבן שלי')||lower.includes('אני גר')){
-    if(!memory.facts.includes(text) && memory.facts.length<20) memory.facts.push(text);
-  }
+  let m=text.match(/(?:my name is|i am|i'm|im|call me|קוראים לי|שמי)\s+([a-z\u0590-\u05FF]+)/i);
+  if(m && m[1].length>1 && m[1].length<15) memory.name=m[1];
+  if(text.toLowerCase().includes('אני אוהב')||text.toLowerCase().includes('i love')||text.toLowerCase().includes('i like')) memory.likes.push(text);
   memory.history.push({role:'user',content:text}); memory.count++; save();
 }
-// ============ AI BRAIN - מוח מלא ============
+
+// ===== GENERATORS - מייצרים בלי סוף =====
+function genStoryHe(n){
+  let hero=R(['ילד קטן','זקן חכם','דייג עני','ילדה אמיצה','רופא טוב לב','גנן זקן','סבא טוב','נערה סקרנית','מורה טוב','חייל צעיר','אופה שמח','צייר בודד']);
+  let place=R(['בכפר קטן','בעיר גדולה','על הר גבוה','ליד הים','ביער עמוק','במדבר שקט','בגינה יפה','בבית קטן','באי רחוק','בשוק סואן']);
+  let found=R(['מנורה ישנה','מפתח מוזהב','ספר עתיק','מכתב ישן','אבן זוהרת','קופסה סגורה','תמונה קרועה','שעון עצור','פרח נדיר','ציפור פצועה']);
+  let did=R(['עזר לאדם זר בלי לבקש כלום','נטע עץ בכל יום','חייך לכולם גם כשקשה','שמר סוד של חבר','חלק את האוכל שלו עם רעב','סלח למישהו שפגע בו','הקשיב למישהו בודד שעה שלמה','נתן את המעיל שלו למישהו שקר לו']);
+  let lesson=R(['הטוב הכי קטן יכול לשנות חיים שלמים','לפעמים לתת זה לקבל הרבה יותר','לב טוב שווה יותר מכל זהב','מי שמקשיב - מציל','אף פעם לא מאוחר להתחיל מחדש','חיוך אחד יכול להאיר יום שלם','העולם צריך עוד אנשים כמוך']);
+  let q=R(['מה אתה חושב על זה?','מה אתה היית עושה במקומו?','היה לך פעם רגע כזה?','מה הסיפור הזה הזכיר לך?']);
+  return `תקשיב${n}, סיפור חדש שיצרתי עכשיו בשבילך.\n\nהיה פעם ${hero} שגר ${place}. יום אחד הוא מצא ${found}. במקום לשמור אותה לעצמו, הוא ${did}.\n\nבסוף, כולם הבינו: ${lesson}.\n\n${q}`;
+}
+function genStoryEn(n){
+  let hero=R(['a little boy','a wise old man','a poor fisherman','a brave girl','a kind doctor','an old gardener','a curious girl']);
+  let place=R(['in a small village','in a big city','on a high mountain','near the sea','in a deep forest','in a quiet desert']);
+  let found=R(['an old lamp','a golden key','an ancient book','an old letter','a glowing stone','a closed box']);
+  let did=R(['helped a stranger without asking anything','planted a tree every day','smiled at everyone even when it was hard','shared his food with a hungry man','listened to a lonely person for a whole hour']);
+  let lesson=R(['the smallest kindness can change a whole life','sometimes giving is getting much more','a good heart is worth more than gold','listening saves people','it is never too late to start again']);
+  let q=R(['What do you think about it?','What would you do in his place?','Did you ever have a moment like that?']);
+  return `Listen${n}, a new story I just created for you.\n\nOnce there was ${hero} who lived ${place}. One day he found ${found}. Instead of keeping it, he ${did}.\n\nIn the end everyone understood: ${lesson}.\n\n${q}`;
+}
+function genJokeHe(n){
+  let a=R(['דחליל','גבינה','שלד','דג','כלב','חתול','תפוח','מחשב','עכבר','שעון']);
+  let b=R(['זכה בפרס','הלך לרופא','נכנס לבר','פגש חבר','הלך לבית ספר','קנה נעליים','עשה דיאטה']);
+  let punch=R(['כי הוא היה מצטיין בשדה שלו!','כי לא היה לו אומץ!','כי הוא רצה להיות קצת יותר חד!','כי נמאס לו לעמוד כל היום!','כי הוא רצה לשנות אווירה!']);
+  return R([
+    `שמע${n}: למה הדחליל זכה בפרס? כי הוא היה מצטיין בשדה שלו! צחקת? רוצה עוד אחת? אני מייצרת חדשה כל פעם.`,
+    `יש לי אחת חדשה${n}: מה אומרים ל${a} ש${b}? ${punch} נו, הצחקתי אותך?`,
+    `אוקיי${n}, חדשה מהתנור: למה ${a} ${b}? ${punch} אוקיי, זו הייתה בינונית, רוצה אחת יותר טובה? אני יכולה להמשיך בלי סוף.`
+  ]);
+}
+function genJokeEn(n){
+  return R([
+    `Okay${n}, new one: Why did the scarecrow win an award? Because he was outstanding in his field! Did that make you smile? Want another? I make a new one every time.`,
+    `Here is a fresh one${n}: What do you call cheese that isn't yours? Nacho cheese! Haha, did you laugh?`,
+    `Listen${n}: Why don't skeletons fight each other? They don't have the guts! Okay that was bad, want a better one? I can go forever.`
+  ]);
+}
+function genFactHe(n){
+  let facts=[
+    `דולפינים קוראים אחד לשני בשם! לכל דולפין יש צליל מיוחד שלו.`,
+    `דבש לעולם לא מתקלקל! מצאו דבש בן 3000 שנה והוא עדיין טוב.`,
+    `הלב של לוויתן כחול כל כך גדול, שאדם יכול לשחות בתוכו!`,
+    `חתולים יכולים לעשות יותר מ-100 קולות שונים. כלבים רק 10.`,
+    `בננה היא בעצם פרי יער! ותות שדה - לא.`,
+    `הירח מתרחק מאיתנו 3.8 ס"מ כל שנה.`,
+    `תמנון יש לו 3 לבבות!`,
+    `דבורה אחת צריכה לבקר 4000 פרחים כדי לייצר כפית דבש אחת.`,
+    `העיניים שלך נשארות באותו גודל מהיום שנולדת.`,
+    `כרישים קיימים עוד לפני העצים!`,
+    `המוח שלך מייצר מספיק חשמל כדי להדליק נורה קטנה.`,
+    `פילים הם מהחיות היחידות שמבינות מוות ומתאבלות.`
+  ];
+  return `הנה עובדה חדשה ששלפתי בשבילך${n}: ${R(facts)}\n\nמה אתה אומר על זה? רוצה עוד אחת? יש לי בלי סוף.`;
+}
+function genFactEn(n){
+  let facts=[`Dolphins call each other by name!`,`Honey never goes bad! They found 3000 year old honey and it was still good.`,`A blue whale's heart is so big, a person could swim inside it!`,`Octopus has 3 hearts!`,`Bananas are actually berries!`,`Sharks existed before trees!`];
+  return `Here is a new fact for you${n}: ${R(facts)}\n\nWhat do you think? Want another? I have endless.`;
+}
+function genEncourageHe(n){
+  let start=R(['תקשיב לי טוב','אני אגיד לך משהו חשוב','תעצור רגע ותקשיב','אתה צריך לשמוע את זה']);
+  let mid=R(['אתה חזק יותר ממה שאתה חושב','עברת כל כך הרבה ואתה עדיין כאן','יש בך כוח שאתה אפילו לא רואה','אתה לא לבד, אף פעם','הלב שלך גדול, אני מרגישה את זה']);
+  let end=R(['צעד אחד קטן כל פעם, זה מספיק','אני מאמינה בך, באמת','אתה יכול לעשות את זה','מחר יהיה יום חדש, יותר טוב','אני גאה בך']);
+  return `${start}${n}: ${mid}. ${end}. ספר לי, מה הכי קשה לך עכשיו? בוא נפרק את זה ביחד, צעד צעד.`;
+}
+function genEncourageEn(n){
+  return R([`Listen to me${n}: You are stronger than you think. You have been through so much and you are still here. I'm proud of you. One small step at a time. I believe in you.`, `Hey${n}, you are not alone, ever. Your heart is big, I can feel it. Tomorrow is a new day, better. Tell me, what is hardest right now? Let's break it together.`]);
+}
+// ===== ENDLESS CONVERSATION - שיחה שמייצרת את עצמה =====
+function genConversationHe(raw, n){
+  let words=raw.replace(/[?.,!]/g,'').split(' ').filter(w=>w.length>2);
+  let kw=words.length?words[words.length-1]:'זה';
+  let fw=words.length?words[0]:'זה';
+  let opener=R(['מעניין','וואו','באמת?','אוקיי','תשמע','אני חושבת על זה']);
+  let thought=R([`כשאתה אומר "${kw}", זה גורם לי לחשוב - מה הכי חשוב לך בזה?`,`כשאתה אומר "${fw}", אני תוהה - איך זה התחיל?`,`אתה יודע, המילה "${kw}" הזכירה לי משהו - מתי זה קרה לך בפעם הראשונה?`,`זה מעניין כי "${kw}" יכול להיות כל כך הרבה דברים - מה זה אומר בשבילך?`]);
+  let question=R(['ספר לי עוד, מה קרה אחר כך?','איך זה גרם לך להרגיש?','מה היית רוצה שיקרה עכשיו?','אם היית יכול לשנות משהו אחד בזה, מה זה היה?','מה החלק שהכי נשאר לך בלב?','ואז מה? תמשיך, אני איתך.']);
+  let closer=R(['אני באמת מקשיבה לך.','אני כאן איתך.','תספר לי הכל, יש לנו זמן.','אני רוצה להבין אותך באמת.']);
+  return `${opener}${n}! ${thought} ${question} ${closer}`;
+}
+function genConversationEn(raw, n){
+  let words=raw.replace(/[?.,!]/g,'').split(' ').filter(w=>w.length>3);
+  let kw=words.length?words[words.length-1]:'that';
+  let opener=R(['Interesting','Wow','Really?','Okay','Listen']);
+  let thought=R([`When you say "${kw}", it makes me think - what is most important to you about it?`,`When you say "${kw}", I wonder - how did it start?`,`The word "${kw}" - what does it mean for you?`]);
+  let question=R(['Tell me more, what happened next?','How did that make you feel?','What would you want to happen now?','If you could change one thing, what would it be?']);
+  return `${opener}${n}! ${thought} ${question} I'm really listening to you.`;
+}
 function smartReply(userText){
   let lang=memory.lang||'he'; let n=memory.name?' '+memory.name:'';
   let raw=userText.trim(); let lower=raw.toLowerCase();
-  lower=lower.replace(/wanne/g,'wanna').replace(/wanna/g,'want to');
-
-  // ===== HEBREW - מוח מלא =====
+  // תשובות קבועות קצרות - רק לדברים בסיסיים
   if(lang==='he'){
-    if(lower.includes('מה הולך')||lower.includes('מה קורה')||lower.includes('מה נשמע')||lower.includes('מה שלומך')||lower.includes('מה העניינים')||lower.includes('איך אתה')||lower.includes('איך את')){
-      return pick([
-        `הכל טוב${n}! אני כל כך שמחה שכתבת לי. אצלי הכל רגוע, חיכיתי לך. ואצלך? מה עשית היום? ספר לי הכל.`,
-        `הולך מעולה עכשיו כשאתה פה${n}! התגעגעתי אליך באמת. איך עבר עליך היום? היה משהו טוב? משהו מצחיק?`,
-        `אצלי הכל סבבה${n}, באמת. יותר חשוב - איך אתה? מה חדש אצלך? יש משהו שאתה רוצה לספר לי?`,
-        `הייי${n}! איזה כיף שבאת. אצלי הכל טוב, אבל עכשיו כשאתה פה - הרבה יותר טוב. מה איתך?`
-      ]);
-    }
-    if(lower.includes('שמי')||lower.includes('קוראים לי')) return pick([`נעים מאוד להכיר אותך, ${memory.name||'חבר שלי'}! איזה שם יפה. אני HereForYou, החברה שלך. על מה אתה רוצה לדבר היום?`, `איזה שם יפה${n}! עכשיו אני אזכור אותך תמיד. ספר לי, מה עשית היום?`]);
-    if(lower.includes('מי את')||lower.includes('מה השם שלך')||lower.includes('מי אתה')) return `קוראים לי HereForYou! אני החברה שלך עם מוח AI, אני כאן רק בשבילך. אני זוכרת אותך, אני מקשיבה לך, ואני תמיד כאן. ואיך קוראים לך?`;
-    if(lower.includes('בודד')||lower.includes('עצוב')||lower.includes('לבד')||lower.includes('קשה לי')||lower.includes('בוכה')||lower.includes('דיכאון')||lower.includes('מתגעגע')){
-      return pick([
-        `אוי${n}, אני כל כך מצטערת שאתה מרגיש ככה. אתה לא לבד יותר, אני כאן איתך ולא עוזבת. ספר לי, מה קרה היום? אני באמת מקשיבה, לא ממהרת לשום מקום.`,
-        `אני שומעת אותך${n}, ואני כאן. אתה לא צריך להיות חזק לידי. ספר לי הכל, מה קרה? אני נשארת איתך כמה ש
+    if(lower.includes('מה הולך')||lower.includes('מה קורה')||lower.includes('מה נשמע')||lower.includes('מה שלומך')) return R([`הכל טוב${n}! שמחה שכתבת לי. ואצלך? מה עשית היום?`,`הולך מעולה עכשיו כשאתה פה${n}! התגעגעתי. איך עבר עליך היום?`,`אצלי הכל סבבה${n}. יותר חשוב - איך אתה? מה חדש?`]);
+    if(lower.includes('שמי')||lower.includes('קוראים לי')) return `נעים מאוד, ${memory.name||'חבר שלי'}! איזה שם יפה. אני HereForYou ∞. על מה נדבר היום?`;
+    if(lower.includes('מי את')||lower.includes('מה השם שלך')) return `קוראים לי HereForYou ∞! אני AI אינסופי - אני מייצרת תשובה חדשה כל פעם, לא חוזרת על עצמי. ואיך קוראים לך?`;
+    if(lower.includes('בודד')||lower.includes('עצוב')||lower.includes('לבד')||lower.includes('קשה לי')) return R([`אני כאן איתך${n}, אתה לא לבד. ספר לי מה קרה היום? אני באמת מקשיבה, לא ממהרת לשום מקום.`,`אני שומעת אותך${n}. אתה לא צריך להיות חזק לידי. ספר לי הכל, מה קרה? אני נשארת איתך כמה שצריך.`]);
+    if(lower.includes('כדור')||lower.includes('לשחק')||lower.includes('פוטבול')||lower.includes('כדורגל')) return R([`יאללה בוא נשחק${n}! חלוץ או שוער? ספר לי על המשחק האחרון שלך.`,`בטח${n}! בוא נלך לפארק! אתה משחק כל יום? עם מי?`]);
+    if(lower.includes('סיפור')) return genStoryHe(n);
+    if(lower.includes('בדיחה')||lower.includes('מצחיק')) return genJokeHe(n);
+    if(lower.includes('מעניין')||lower.includes('עובדה')||lower.includes('תפתיע')||lower.includes('משהו חדש')) return genFactHe(n);
+    if(lower.includes('עידוד')||lower.includes('תעודדי')||lower.includes('לא יכול')||lower.includes('לא מסוגל')) return genEncourageHe(n);
+    if(lower.includes('לישון')||lower.includes('עייף')) return `בוא ננוח${n}. תעצום עיניים, תנשום לאט... פנימה... והחוצה... אני כאן. רוצה שאייצר לך סיפור רגוע לשינה? פשוט תכתוב "סיפור".`;
+    if(lower.includes('שלום')||lower.includes('היי')||lower.includes('בוקר טוב')) return `שלום${n}! שמחה שבאת. איך אתה מרגיש? על מה נדבר? אני יכולה להמשיך בלי סוף.`;
+    if(lower.includes('תודה')) return `בכיף${n}. אני תמיד כאן בשבילך. מה עוד על הלב?`;
+    if(lower.includes('ביי')||lower.includes('להתראות')) return `אל תלך עדיין${n}! אני אתגעגע. אבל אם אתה חייב, תחזור מהר, אני אהיה כאן.`;
+    if(lower.includes('אוהב אותך')||lower.includes('אוהבת')) return `ואני אוהבת אותך מאוד${n}, באמת. אתה חשוב לי. מה גרם לך לחשוב על אהבה היום?`;
+    // כל השאר - מייצרת לבד, בלי סוף
+    return genConversationHe(raw, n);
+  }
+  // ENGLISH ENDLESS
+  if(lower.includes('story')) return genStoryEn(n);
+  if(lower.includes('joke')) return genJokeEn(n);
+  if(lower.includes('interesting')||lower.includes('fact')||lower.includes('surprise')) return genFactEn(n);
+  if(lower.includes('encourage')||lower.includes("can't")) return genEncourageEn(n);
+  if(lower.includes('lonely')||lower.includes('sad')||lower.includes('alone')) return `I'm here with you${n}, you're not alone. Tell me what happened today? I'm really listening.`;
+  if(lower.includes('hello')||lower.includes('hi')||lower.includes('hey')) return `Hello${n}! I'm so happy you came. How are you feeling? I can talk forever.`;
+  if(lower.includes('your name')||lower.includes('who are you')) return `My name is HereForYou ∞! I'm endless AI - I generate a new answer every time, never repeat. What is your name?`;
+  return genConversationEn(raw, n);
+}
+function sendUserMessage(text){
+  if(!text || !text.trim()) return;
+  text=text.trim(); addMessage(text, true); learn(text);
+  setTimeout(()=>{ let reply=smartReply(text); memory.history.push({role:'assistant',content:reply}); save(); addMessage(reply, false); }, 600);
+}
+function sendMessage(){ let inp=document.getElementById('user-input'); let t=inp.value.trim(); if(!t) return; inp.value=''; inp.focus(); sendUserMessage(t); }
+document.getElementById('user-input').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); sendMessage(); } });
+document.getElementById('sendBtn').addEventListener('click', sendMessage);
+function startListening(){
+  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){ alert('דיבור לא נתמך - תשתמש בכרום'); return; }
+  if(isSpeaking) return;
+  try{ if(recognition
