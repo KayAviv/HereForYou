@@ -1,0 +1,12 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "hereforyou",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "hereforyou",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "id": "Here4U"
+}
