@@ -94,7 +94,7 @@ app.get('/', (req, res) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
       <meta name="theme-color" content="#ffffff">
       <meta name="apple-mobile-web-app-capable" content="yes">
-      <link rel="manifest" href='data:application/manifest+json,{"name":"HereForYou","short_name":"HereForYou","start_url":"/","display":"standalone","background_color":"%23f8fafc","theme_color":"%23ffffff","description":"A warm personal AI companion for elderly users","icons":[]}'>
+      <link rel="manifest" href='data:application/manifest+json,{"name":"HereForYou","short_name":"HereForYou","start_url":"/","display":"standalone","background_color":"%23f8fafc","theme_color":"%23ffffff","description":"A warm personal AI companion for elderly users","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2583/2583344.png","sizes":"192x192","type":"image/png"},{"src":"https://cdn-icons-png.flaticon.com/512/2583/2583344.png","sizes":"512x512","type":"image/png"}]}'>
       <title>HereForYou Companion</title>
       <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
