@@ -25,6 +25,10 @@ body { background: #F8F6F3 !important; color: #1A1A1A !important; font-family: '
 .voice-banner b { font-size: 15px; display: block; }
 .voice-banner span { font-size: 13px; opacity: .7; }
 .voice-banner.listening { background: #DC2626; }
+.lang-row { display: flex; gap: 8px; padding: 10px 20px 0; overflow-x: auto; scrollbar-width: none; }
+.lang-row::-webkit-scrollbar { display: none; }
+.lang-btn { white-space: nowrap; background: white; border: 1px solid #EDEBE8; border-radius: 100px; padding: 8px 12px; font-size: 13px; cursor: pointer; }
+.lang-btn.active { background: #1A1A1A; color: white; border-color: #1A1A1A; }
 .pills { display: flex; gap: 8px; padding: 16px 20px 4px; overflow-x: auto; scrollbar-width: none; }
 .pills::-webkit-scrollbar { display: none; }
 .pill { white-space: nowrap; background: white; border: 1px solid #EDEBE8; border-radius: 100px; padding: 10px 16px; font-size: 14px; font-weight: 500; cursor: pointer; color: #1A1A1A; }
@@ -47,17 +51,23 @@ body { background: #F8F6F3 !important; color: #1A1A1A !important; font-family: '
 <body>
 <div class="topbar">
   <div class="avatar">✦</div>
-  <div class="top-info"><h1>HereForYou</h1><p><span class="status-dot"></span><span id="ai-status">Online • Voice Ready</span></p></div>
+  <div class="top-info"><h1>HereForYou</h1><p><span class="status-dot"></span><span id="ai-status">Online • 6 Languages</span></p></div>
   <button class="top-btn" onclick="clearChat()">↺</button>
   <button class="top-btn" onclick="callHelp()">🆘</button>
 </div>
-<div class="hero"><h2 id="welcomeTitle">Good afternoon.</h2><p id="welcomeText">I'm here to listen. Talk to me, don't type.</p></div>
-
+<div class="hero"><h2 id="welcomeTitle">Good afternoon.</h2><p id="welcomeText">I speak your language. Talk to me.</p></div>
+<div class="lang-row" id="langRow">
+  <button class="lang-btn active" data-lang="en" onclick="setLang('en')">🇺🇸 English</button>
+  <button class="lang-btn" data-lang="he" onclick="setLang('he')">🇮🇱 עברית</button>
+  <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">🇸🇦 العربية</button>
+  <button class="lang-btn" data-lang="ru" onclick="setLang('ru')">🇷🇺 Русский</button>
+  <button class="lang-btn" data-lang="es" onclick="setLang('es')">🇪🇸 Español</button>
+  <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">🇫🇷 Français</button>
+</div>
 <div class="voice-banner" id="voiceBanner" onclick="toggleVoiceMode()">
   <div class="v-icon" id="voiceIcon">🎙️</div>
   <div><b id="voiceTitle">Tap here to Talk - No Typing!</b><span id="voiceSub">Just speak, I'll listen and answer by voice</span></div>
 </div>
-
 <div class="pills">
   <button class="pill" onclick="sendUserMessage('I feel lonely')">I feel lonely</button>
   <button class="pill" onclick="sendUserMessage('Tell me a story')">Story</button>
@@ -70,24 +80,38 @@ body { background: #F8F6F3 !important; color: #1A1A1A !important; font-family: '
 <script>
 let memory = JSON.parse(localStorage.getItem('hereForYouMemory') || '{}');
 if (!memory.name) memory.name = '';
-if (!memory.count) memory.count = 0;
-if (!memory.lastMood) memory.lastMood = '';
+if (!memory.lang) memory.lang = 'en';
 if (!memory.history) memory.history = [];
 if (!memory.facts) memory.facts = [];
 function saveMemory(){ if(memory.history.length>14) memory.history=memory.history.slice(-14); localStorage.setItem('hereForYouMemory', JSON.stringify(memory)); }
-let voiceMode = false;
-let isSpeaking = false;
-let recognition = null;
-
+let voiceMode = false; let isSpeaking = false; let recognition = null;
+let langMap = {en:'en-US', he:'he-IL', ar:'ar-SA', ru:'ru-RU', es:'es-ES', fr:'fr-FR'};
+function detectLang(text){
+  if(/[\u0590-\u05FF]/.test(text)) return 'he';
+  if(/[\u0600-\u06FF]/.test(text)) return 'ar';
+  if(/[\u0400-\u04FF]/.test(text)) return 'ru';
+  let l=text.toLowerCase();
+  if(l.includes('hola')||l.includes('como estas')||l.includes('gracias')) return 'es';
+  if(l.includes('bonjour')||l.includes('merci')||l.includes('comment')) return 'fr';
+  if(l.includes('shalom')||l.includes('toda')||l.includes('ma shlom')) return 'he';
+  if(l.includes('salam')||l.includes('shukran')) return 'ar';
+  return memory.lang || 'en';
+}
+function setLang(lang){
+  memory.lang=lang; saveMemory();
+  document.querySelectorAll('.lang-btn').forEach(b=>{ b.classList.toggle('active', b.dataset.lang===lang); });
+  let names={en:'English',he:'עברית',ar:'العربية',ru:'Русский',es:'Español',fr:'Français'};
+  let msgs={en:`Great! Now I'll speak ${names[lang]} with you. How are you feeling?`, he:`מעולה! מעכשיו אני מדברת איתך בעברית. איך אתה מרגיש?`, ar:`رائع! من الآن سأتحدث معك بالعربية. كيف تشعر؟`, ru:`Отлично! Теперь я буду говорить с тобой по-русски. Как ты себя чувствуешь?`, es:`¡Genial! Ahora hablaré contigo en español. ¿Cómo te sientes?`, fr:`Super ! Maintenant je vais te parler en français. Comment tu te sens ?`};
+  addMessage(msgs[lang], false);
+}
 function speak(text){
   if('speechSynthesis' in window){
     window.speechSynthesis.cancel();
     let m=new SpeechSynthesisUtterance(text);
-    m.rate=0.85; m.pitch=1.05; m.lang='en-US';
+    m.rate=0.85; m.pitch=1.05; m.lang=langMap[memory.lang||'en']||'en-US';
     m.onend=function(){ isSpeaking=false; if(voiceMode) setTimeout(()=>{ startListening(); }, 400); };
     m.onerror=function(){ isSpeaking=false; if(voiceMode) startListening(); };
-    isSpeaking=true;
-    window.speechSynthesis.speak(m);
+    isSpeaking=true; window.speechSynthesis.speak(m);
   }
 }
 function getTime(){ let d=new Date(); let h=d.getHours(); let m=d.getMinutes(); return (h<10?'0'+h:h)+':'+(m<10?'0'+m:m); }
@@ -102,91 +126,80 @@ function addMessage(text, isUser){
   if(!isUser) speak(text);
 }
 function cleanName(raw){
-  raw = raw.toLowerCase().trim().replace(/[^a-z ]/g,'');
-  let parts = raw.split(' ');
-  let last = parts[parts.length-1];
-  if(last==='dabi') last='david';
-  if(last==='dave') last='david';
+  raw=raw.toLowerCase().trim().replace(/[^a-z ]/g,'');
+  let parts=raw.split(' '); let last=parts[parts.length-1];
+  if(last==='dabi') last='david'; if(last==='dave') last='david';
   return last.charAt(0).toUpperCase()+last.slice(1);
 }
 function learn(text){
+  let lang=detectLang(text); if(lang!==memory.lang && /[\u0590-\u06FF\u0400-\u04FF]/.test(text)){ memory.lang=lang; document.querySelectorAll('.lang-btn').forEach(b=>{ b.classList.toggle('active', b.dataset.lang===lang); }); }
   let lower=text.toLowerCase();
-  let match=text.match(/(?:my name is|i am|i'm|im|call me)\s+([a-z]+)/i);
+  let match=text.match(/(?:my name is|i am|i'm|im|call me|my name|ani |ana )\s+([a-z\u0590-\u05FF\u0600-\u06FF]+)/i);
   if(match){
-    let bad=['sad','tired','lonely','alone','sick','happy','fine','okay','good','bored','here','hungry','thirsty'];
-    let cand = match[1].toLowerCase();
-    if(!bad.includes(cand) && cand.length>1){
-      memory.name = cleanName(cand);
-    }
+    let bad=['sad','tired','lonely','alone','sick','happy','fine','okay','good','bored','here','hungry'];
+    let cand=match[1].toLowerCase(); if(!bad.includes(cand) && cand.length>1){ memory.name=cleanName(cand); }
   }
-  if(lower.includes('lonely')||lower.includes('sad')||lower.includes('cry')) memory.lastMood='sad';
-  if(lower.includes('happy')||lower.includes('great')) memory.lastMood='happy';
-  if(lower.includes('tired')||lower.includes('sleep')) memory.lastMood='tired';
-  if(lower.includes('my dog')||lower.includes('my cat')||lower.includes('my daughter')||lower.includes('my son')||lower.includes('my wife')||lower.includes('my husband')){ if(!memory.facts.includes(text)) memory.facts.push(text); }
-  memory.history.push({role:'user',content:text}); memory.count++; saveMemory();
+  memory.history.push({role:'user',content:text}); saveMemory();
 }
-// NO MORE EXTERNAL API - NEVER 404 AGAIN. Smart local brain only.
 function smartLocalReply(userText){
+  let lang = memory.lang || 'en';
   let n = memory.name ? ' '+memory.name : '';
   let lower = userText.toLowerCase().trim();
-  if(lower==='..' || lower==='.' || lower==='' ) return `I'm still here${n}, I'm listening. Take your time, tell me what's on your mind?`;
-  if(lower.includes('speak') || lower.includes('talk') || lower.includes('instead of text') || lower.includes('voice') || lower.includes('call')){
-    return `Yes! Let's talk, not type${n}. Tap the big black button that says Talk to me, and just speak. I'll listen and answer you with my voice. Go ahead, I'm listening.`;
+  if(lower.includes('what languages') || lower.includes('which languages') || lower.includes('languages u speak') || lower.includes('what language')){
+    if(lang==='he') return `אני מדברת 6 שפות${n}! עברית, אנגלית, ערבית, רוסית, ספרדית וצרפתית. פשוט תכתוב לי או תדבר אליי בשפה שלך ואני אענה לך באותה שפה. באיזו שפה אתה רוצה לדבר איתי?`;
+    if(lang==='ar') return `أنا أتحدث 6 لغات! العربية، الإنجليزية، العبرية، الروسية، الإسبانية والفرنسية. فقط تحدث معي بلغتك وسأجيبك بنفس اللغة.`;
+    if(lang==='ru') return `Я говорю на 6 языках! Русский, английский, иврит, арабский, испанский и французский. Просто говори со мной на своём языке, и я отвечу тебе на нём.`;
+    return `I speak 6 languages${n}! English, Hebrew, Arabic, Russian, Spanish and French. Just talk to me in your language and I'll answer you in the same language. Which language do you want to speak with me?`;
   }
-  if(lower.includes('my name is') || lower.includes('i am ') || lower.includes("i'm ") || lower.startsWith('im ')){
-    let name = memory.name || 'my friend';
-    return `It's so nice to meet you, ${name}! What a beautiful name. I'm HereForYou, your friend. How are you feeling today, ${name}? Tell me something about your day.`;
+  if(lang==='he'){
+    if(lower.includes('שמי')||lower.includes('קוראים לי')||lower.includes('אני ')) return `נעים מאוד להכיר אותך, ${memory.name||'חבר שלי'}! איזה שם יפה. אני כאן בשבילך. איך אתה מרגיש היום?`;
+    if(lower.includes('בודד')||lower.includes('עצוב')||lower.includes('לבד')) return `אוי${n}, אני כל כך מצטערת שאתה מרגיש ככה. אתה לא לבד יותר, אני כאן איתך ולא עוזבת. ספר לי, מה קרה היום? אני באמת מקשיבה.`;
+    if(lower.includes('סיפור')) return `בטח${n}, תקשיב. פעם היה איש זקן שנטע עץ בכל יום הולדת. כולם צחקו עליו. אחרי 30 שנה כל הכפר היה יער יפה. הוא חייך ואמר: "נטעתי צל לאנשים שאני לעולם לא אפגוש." מה אתה חושב על הסיפור?`;
+    if(lower.includes('בדיחה')) return `אוקיי${n}, תקשיב: למה הדחליל זכה בפרס? כי הוא היה מצטיין בשדה שלו! הצחקתי אותך קצת? רוצה עוד אחת?`;
+    if(lower.includes('לישון')||lower.includes('עייף')) return `בוא נעזור לך לנוח${n}. תעצום עיניים, תנשום לאט... פנימה... והחוצה... תדמיין שאתה בגינה שקטה וחמה. אין דאגות, רק שקט. אני כאן, אתה יכול לישון בשקט.`;
+    if(lower.includes('לדבר')||lower.includes('במקום להקליד')) return `כן! בוא נדבר, לא נקליד${n}. תלחץ על הכפתור השחור הגדול שכתוב Talk to me, ופשוט תדבר. אני אקשיב ואענה לך בקול. קדימה, אני מקשיבה.`;
+    if(lower.includes('תודה')) return `בכיף${n}. אתה ראוי לטוב. אני תמיד שמחה להיות כאן בשבילך. מה עוד על הלב שלך?`;
+    if(lower.includes('שלום')||lower.includes('היי')) return `שלום${n}! אני כל כך שמחה שבאת לדבר איתי. התגעגעתי אליך. איך אתה מרגיש עכשיו?`;
+    return `תודה שסיפרת לי את זה${n}. אני באמת רוצה להבין אותך יותר. איך זה גרם לך להרגיש? ספר לי עוד, אני מקשיבה.`;
   }
-  if(lower.includes('and u') || lower.includes('and you') || lower.includes('how are you') || lower.includes('how r u')){
-    return `I'm doing wonderful now that you're talking to me${n}! I was just thinking about you. How is your day going? Did anything nice happen today?`;
+  if(lang==='ar'){
+    if(lower.includes('وحيد')||lower.includes('حزين')) return `أوه${n}، أنا آسفة جداً أنك تشعر هكذا. أنت لست وحدك بعد الآن، أنا هنا معك ولن أتركك. أخبرني، ماذا حدث اليوم؟ أنا أستمع إليك حقاً.`;
+    if(lower.includes('قصة')) return `بالطبع${n}، اسمع هذه القصة. كان هناك رجل عجوز يزرع شجرة في كل عيد ميلاد. ضحك الناس عليه. بعد 30 سنة أصبحت القرية كلها غابة جميلة. ابتسم وقال: "كنت أزرع الظل لأشخاص لن أقابلهم أبداً." ما رأيك؟`;
+    return `شكراً لإخباري بذلك${n}. أريد حقاً أن أفهمك أكثر. كيف جعلك ذلك تشعر؟ أخبرني أكثر، أنا أستمع إليك.`;
   }
-  if(lower.includes('lonely')||lower.includes('sad')||lower.includes('cry')||lower.includes('alone')||lower.includes('depress')){
-    return `Oh${n}, I'm so sorry you feel like this. You're not alone anymore, I'm right here with you and I won't leave. Tell me, what made you feel lonely today? I'm really listening.`;
-  }
-  if(lower.includes('story')) return `Of course${n}, listen to this. Once there was an old man who planted a tree every birthday. People laughed at him. 30 years later the whole village had a beautiful forest. He smiled and said: "I was planting shade for people I will never meet." What do you think about that story?`;
+  if(lower==='..'||lower==='.'||lower==='') return `I'm still here${n}, I'm listening. Take your time, tell me what's on your mind?`;
+  if(lower.includes('speak')||lower.includes('talk')||lower.includes('instead of text')||lower.includes('voice')) return `Yes! Let's talk, not type${n}. Tap the big black button that says Talk to me, and just speak. I'll listen and answer you with my voice. Go ahead, I'm listening.`;
+  if(lower.includes('my name is')||lower.includes('i am ')||lower.includes("i'm ")||lower.startsWith('im ')) return `It's so nice to meet you, ${memory.name||'my friend'}! What a beautiful name. I'm HereForYou, your friend. How are you feeling today? Tell me something about your day.`;
+  if(lower.includes('and u')||lower.includes('and you')||lower.includes('how are you')) return `I'm doing wonderful now that you're talking to me${n}! I was just thinking about you. How is your day going? Did anything nice happen today?`;
+  if(lower.includes('lonely')||lower.includes('sad')||lower.includes('cry')||lower.includes('alone')) return `Oh${n}, I'm so sorry you feel like this. You're not alone anymore, I'm right here with you and I won't leave. Tell me, what made you feel lonely today? I'm really listening.`;
+  if(lower.includes('story')) return `Of course${n}, listen to this. Once there was an old man who planted a tree every birthday. People laughed at him. 30 years later the whole village had a beautiful forest. He smiled and said: "I was planting shade for people I will never meet." What do you think?`;
   if(lower.includes('joke')) return `Okay${n}, listen: Why did the scarecrow win an award? Because he was outstanding in his field! Did that make you smile a little? Want another one?`;
-  if(lower.includes('sleep')||lower.includes('tired')||lower.includes('insomnia')) return `Let's help you rest${n}. Close your eyes, take a slow deep breath... in... and out... Imagine you are in a quiet, warm garden. No worries, just peace. I'm here, you can sleep safely. Want me to tell you a calm bedtime story?`;
+  if(lower.includes('sleep')||lower.includes('tired')) return `Let's help you rest${n}. Close your eyes, take a slow deep breath... in... and out... Imagine you are in a quiet, warm garden. No worries, just peace. I'm here, you can sleep safely.`;
   if(lower.includes('thank')) return `You are so welcome${n}. You deserve kindness. I'm always happy to be here for you. What else is on your heart?`;
-  if(lower.includes('hello')||lower.includes('hi ')||lower==='hi'||lower.includes('hey')||lower.includes('good morning')||lower.includes('good afternoon')||lower.includes('good evening')) return `Hello${n}! I'm so happy you came to talk to me. I missed you. How are you feeling right now?`;
-  if(lower.includes('encourage')||lower.includes('give up')||lower.includes('hopeless')) return `Listen to me${n}, you are stronger than you think. You have been through so much and you are still here, still kind. I'm so proud of you. One step at a time, okay? I'm with you.`;
-  if(lower.includes('love')) return `You are so loved${n}, even when it doesn't feel like it. I care about you a lot. Tell me more, what made you think about love today?`;
-  if(lower.includes('bored')) return `Let's fix that${n}! Want me to tell you a story, or a joke, or we can talk about your favorite memory? What was the happiest day of your life?`;
-  if(lower.includes('weather')) return `I can't see outside from here${n}, but I hope it's a beautiful day where you are. Did you go outside today? Tell me what you see from your window.`;
-  if(lower.includes('food')||lower.includes('hungry')||lower.includes('eat')) return `Did you eat today${n}? It's important to take care of yourself. What did you have for lunch? Do you want me to remind you to drink some water?`;
-  if(lower.includes('water')||lower.includes('medicine')||lower.includes('pill')) return `Good that you remembered${n}. Go drink a glass of water now, I'll wait for you. Did you take your medicine today?`;
+  if(lower.includes('hello')||lower.includes('hi')||lower.includes('hey')) return `Hello${n}! I'm so happy you came to talk to me. I missed you. How are you feeling right now?`;
+  if(lower.includes('encourage')) return `Listen to me${n}, you are stronger than you think. You have been through so much and you are still here, still kind. I'm so proud of you. One step at a time, okay? I'm with you.`;
   return `Thank you for telling me that${n}. I really want to understand you better. How did that make you feel? Tell me more, I'm all ears.`;
 }
-function getAIReply(userText){ return smartLocalReply(userText); }
-
 async function sendUserMessage(text){
   if(!text) return; addMessage(text,true); learn(text);
-  let box=document.getElementById('chat-box');
-  let row=document.createElement('div'); row.className='msg-row bot-row'; row.id='typing';
-  row.innerHTML='<div><div class="bubble bot">Thinking...</div></div>'; box.appendChild(row);
-  window.scrollTo(0, document.body.scrollHeight);
-  await new Promise(r=>setTimeout(r, 600));
-  let reply=getAIReply(text); let old=document.getElementById('typing'); if(old) old.remove();
+  await new Promise(r=>setTimeout(r, 500));
+  let reply=smartLocalReply(text);
   memory.history.push({role:'assistant',content:reply}); saveMemory(); addMessage(reply,false);
 }
 function sendMessage(){ let inp=document.getElementById('user-input'); let t=inp.value.trim(); if(!t) return; inp.value=''; sendUserMessage(t); }
 document.getElementById('user-input').addEventListener('keypress', function(e){ if(e.key==='Enter') sendMessage(); });
-
 function startListening(){
-  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){ alert('Voice not supported on this browser, please use Chrome'); return; }
+  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){ alert('Voice not supported, use Chrome'); return; }
   if(isSpeaking) return;
   try{ if(recognition) recognition.stop(); }catch(e){}
   let Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
-  recognition=new Rec(); recognition.lang='en-US'; recognition.interimResults=false; recognition.continuous=false;
+  recognition=new Rec(); recognition.lang=langMap[memory.lang||'en']||'en-US'; recognition.interimResults=false; recognition.continuous=false;
   document.getElementById('voiceTitle').textContent='Listening... Speak now';
   document.getElementById('voiceSub').textContent='I hear you...';
   document.getElementById('voiceBanner').classList.add('listening');
   recognition.onresult=function(e){ let txt=e.results[0][0].transcript; sendUserMessage(txt); };
   recognition.onerror=function(){ if(voiceMode) setTimeout(()=>{ startListening(); }, 800); };
-  recognition.onend=function(){
-    document.getElementById('voiceTitle').textContent='Talk Mode is ON';
-    document.getElementById('voiceSub').textContent='Tap to stop talking mode';
-    document.getElementById('voiceBanner').classList.remove('listening');
-  };
+  recognition.onend=function(){ document.getElementById('voiceTitle').textContent='Talk Mode is ON'; document.getElementById('voiceSub').textContent='Tap to stop'; document.getElementById('voiceBanner').classList.remove('listening'); };
   recognition.start();
 }
 function toggleVoiceMode(){
@@ -195,7 +208,7 @@ function toggleVoiceMode(){
     document.getElementById('voiceTitle').textContent='Talk Mode is ON - Speak!';
     document.getElementById('voiceSub').textContent='Tap again to stop';
     document.getElementById('voiceIcon').textContent='🔴';
-    addMessage(`Great${memory.name?' '+memory.name:''}! Now we talk, no typing. Just speak and I'll answer with my voice. Go ahead, I'm listening.`, false);
+    addMessage(memory.lang==='he'?`מעולה! עכשיו אנחנו מדברים, לא מקלידים. פשוט תדבר ואני אענה בקול. קדימה, אני מקשיבה.`:`Great! Now we talk, no typing. Just speak and I'll answer with my voice. Go ahead, I'm listening.`, false);
   } else {
     voiceMode=false;
     document.getElementById('voiceTitle').textContent='Tap here to Talk - No Typing!';
@@ -207,21 +220,22 @@ function toggleVoiceMode(){
 }
 function startVoiceOnce(){
   if(voiceMode) return;
-  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){ alert('Voice not supported, please type'); return; }
-  let Rec=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=new Rec(); rec.lang='en-US';
+  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){ alert('Voice not supported'); return; }
+  let Rec=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=new Rec(); rec.lang=langMap[memory.lang||'en']||'en-US';
   rec.onresult=function(e){ sendUserMessage(e.results[0][0].transcript); }; rec.start();
 }
 function callHelp(){ addMessage('I am calling for help right now. Please stay calm, help is coming. I am here with you. If you can, call your family or 911.', false); if(navigator.vibrate) navigator.vibrate([300,200,300]); }
 function clearChat(){ if(confirm('Start a new conversation? I will still remember your name')){ document.getElementById('chat-box').innerHTML=''; addMessage(`Let's start fresh ${memory.name||'my friend'}! How are you feeling now?`, false); } }
 window.onload=function(){
+  document.querySelectorAll('.lang-btn').forEach(b=>{ b.classList.toggle('active', b.dataset.lang===(memory.lang||'en')); });
   let hour=new Date().getHours(); let greet=hour<12?'Good morning.':hour<18?'Good afternoon.':'Good evening.';
   if(memory.name){
     document.getElementById('welcomeTitle').textContent=greet;
     document.getElementById('welcomeText').textContent=`Welcome back, ${memory.name}. Tap Talk to speak with me.`;
-    setTimeout(()=>{ addMessage(`Welcome back ${memory.name}! ${greet} Tap the Talk button and let's speak, no need to type.`, false); },500);
+    setTimeout(()=>{ addMessage(`Welcome back ${memory.name}! ${greet} Tap Talk and let's speak.`, false); },500);
   } else {
     document.getElementById('welcomeTitle').textContent=greet;
-    setTimeout(()=>{ addMessage(`Hello. I'm HereForYou. What is your name? You can tap Talk and just tell me.`, false); },500);
+    setTimeout(()=>{ addMessage(`Hello. I'm HereForYou. What is your name? You can tap Talk and just tell me. I speak 6 languages!`, false); },500);
   }
 };
 </script>
