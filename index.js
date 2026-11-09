@@ -32,23 +32,23 @@ app.post('/api/chat', async (req, res) => {
 app.get('/', (req, res) => {
   res.send(`
     <!DOCTYPE html>
-    <html lang="he" dir="rtl">
+    <html lang="en">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
       <meta name="theme-color" content="#3498db">
       <meta name="apple-mobile-web-app-capable" content="yes">
       <meta name="apple-mobile-web-app-status-bar-style" content="default">
-      <meta name="apple-mobile-web-app-title" content="כאן בשבילך">
-      <title>כאן בשבילך - HereForYou</title>
+      <meta name="apple-mobile-web-app-title" content="HereForYou">
+      <title>HereForYou - Companion</title>
       <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
         body { background: #f4f6f8; display: flex; flex-direction: column; height: 100vh; }
         header { background: #3498db; color: white; padding: 16px; text-align: center; font-size: 1.5rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         #chat-box { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
         .msg { max-width: 80%; padding: 14px 18px; border-radius: 18px; font-size: 1.2rem; line-height: 1.4; }
-        .user { background: #3498db; color: white; align-self: flex-start; border-bottom-right-radius: 4px; }
-        .bot { background: white; color: #2c3e50; align-self: flex-end; border-bottom-left-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .user { background: #3498db; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .bot { background: white; color: #2c3e50; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         footer { padding: 12px; background: white; border-top: 1px solid #ddd; display: flex; gap: 8px; }
         input { flex: 1; font-size: 1.2rem; padding: 12px 16px; border: 1px solid #ccc; border-radius: 24px; outline: none; }
         button { background: #2ecc71; color: white; border: none; padding: 12px 20px; font-size: 1.2rem; border-radius: 24px; cursor: pointer; font-weight: bold; }
@@ -56,13 +56,13 @@ app.get('/', (req, res) => {
       </style>
     </head>
     <body>
-      <header>כאן בשבילך ❤️</header>
+      <header>HereForYou ❤️</header>
       <div id="chat-box">
         <div class="msg bot">שלום! אני כאן בשבילך. מה שלומך היום?</div>
       </div>
       <footer>
-        <input type="text" id="userInput" placeholder="אפשר לרשום פה..." onkeypress="if(event.key==='Enter') sendMsg()">
-        <button id="sendBtn" onclick="sendMsg()">שלח</button>
+        <input type="text" id="userInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendMsg()">
+        <button id="sendBtn" onclick="sendMsg()">Send</button>
       </footer>
 
       <script>
@@ -86,7 +86,7 @@ app.get('/', (req, res) => {
             const data = await res.json();
             appendMsg(data.reply || data.error, 'bot');
           } catch (e) {
-            appendMsg('מצטער, הייתה שגיאה בחיבור.', 'bot');
+            appendMsg('Sorry, connection error.', 'bot');
           } finally {
             input.disabled = false;
             btn.disabled = false;
