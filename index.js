@@ -96,6 +96,15 @@ app.get('/', (req, res) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
       <meta name="theme-color" content="#ffffff">
       <meta name="apple-mobile-web-app-capable" content="yes">
+      <link rel="manifest" href="data:application/manifest+json,{
+        'name': 'HereForYou Companion',
+        'short_name': 'HereForYou',
+        'start_url': '/',
+        'display': 'standalone',
+        'background_color': '#f8fafc',
+        'theme_color': '#ffffff',
+        'icons': []
+      }">
       <title>HereForYou Companion</title>
       <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
@@ -178,176 +187,4 @@ app.get('/', (req, res) => {
         <footer>
           <button id="micBtn" class="mic-btn" onclick="toggleVoice()">🎙️</button>
           <input type="text" id="userInput" placeholder="Type or speak..." onkeypress="if(event.key==='Enter') sendMsg()">
-          <button class="send-btn" onclick="sendMsg()">Send</button>
-        </footer>
-      </div>
-
-      <!-- Settings Modal -->
-      <div id="modal">
-        <div class="modal-content">
-          <h3>Medical & Contact Profile</h3>
-          <label>Medications (JSON format):</label>
-          <textarea id="medInput"></textarea>
-          <label>Emergency Contacts (JSON format):</label>
-          <textarea id="contactInput"></textarea>
-          <button class="modal-btn" onclick="saveSettings()" style="background:#0f172a; color:white;">Save Changes</button>
-          <button class="modal-btn" onclick="closeSettings()" style="background:#f1f5f9; color:#475569;">Cancel</button>
-        </div>
-      </div>
-
-      <script>
-        let currentUser = null;
-        let isSignUp = false;
-
-        function toggleAuthMode() {
-          isSignUp = !isSignUp;
-          document.getElementById('authSubmitBtn').textContent = isSignUp ? 'Create Account' : 'Sign In';
-          document.getElementById('authToggleText').textContent = isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up";
-        }
-
-        async function handleAuth() {
-          const email = document.getElementById('authEmail').value.trim();
-          const password = document.getElementById('authPassword').value.trim();
-          if(!email || !password) return alert('Please enter email and password');
-
-          const endpoint = isSignUp ? '/api/register' : '/api/login';
-          try {
-            const res = await fetch(endpoint, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-            if(data.success) {
-              currentUser = data.email;
-              document.getElementById('auth-screen').style.display = 'none';
-              document.getElementById('app-screen').style.display = 'flex';
-            } else {
-              alert(data.error || 'Authentication failed');
-            }
-          } catch(e) { alert('Connection error'); }
-        }
-
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let recognition = null;
-        let isRecording = false;
-
-        if (SpeechRecognition) {
-          recognition = new SpeechRecognition();
-          recognition.lang = 'en-US';
-          recognition.onresult = (event) => {
-            document.getElementById('userInput').value = event.results[0][0].transcript;
-            sendMsg();
-          };
-          recognition.onend = () => {
-            isRecording = false;
-            document.getElementById('micBtn').classList.remove('recording');
-          };
-        }
-
-        function toggleVoice() {
-          if (!recognition) return alert('Speech recognition not supported on this browser.');
-          if (isRecording) { recognition.stop(); } 
-          else { recognition.start(); isRecording = true; document.getElementById('micBtn').classList.add('recording'); }
-        }
-
-        function speakText(text) {
-          if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-          }
-        }
-
-        function askPreset(text) {
-          document.getElementById('userInput').value = text;
-          sendMsg();
-        }
-
-        async function callEmergency() {
-          try {
-            const res = await fetch('/api/memory', { headers: { 'user-email': currentUser } });
-            const data = await res.json();
-            if (data.emergencyContacts && data.emergencyContacts.length > 0) {
-              const contact = data.emergencyContacts[0];
-              if(confirm('Call emergency contact: ' + contact.name + ' (' + contact.phone + ')?')) {
-                window.location.href = 'tel:' + contact.phone;
-              }
-            } else {
-              alert('No emergency contact configured.');
-            }
-          } catch(e) { alert('Error fetching contacts.'); }
-        }
-
-        async function openSettings() {
-          try {
-            const res = await fetch('/api/memory', { headers: { 'user-email': currentUser } });
-            const data = await res.json();
-            document.getElementById('medInput').value = JSON.stringify(data.medications, null, 2);
-            document.getElementById('contactInput').value = JSON.stringify(data.emergencyContacts, null, 2);
-            document.getElementById('modal').style.display = 'flex';
-          } catch(e) { alert('Error loading profile.'); }
-        }
-
-        function closeSettings() {
-          document.getElementById('modal').style.display = 'none';
-        }
-
-        async function saveSettings() {
-          try {
-            const medications = JSON.parse(document.getElementById('medInput').value);
-            const emergencyContacts = JSON.parse(document.getElementById('contactInput').value);
-            
-            await fetch('/api/memory', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'user-email': currentUser },
-              body: JSON.stringify({ medications, emergencyContacts })
-            });
-            closeSettings();
-            alert('Profile saved successfully!');
-          } catch(e) {
-            alert('Invalid JSON format. Please check your text.');
-          }
-        }
-
-        async function sendMsg() {
-          const input = document.getElementById('userInput');
-          const text = input.value.trim();
-          if (!text) return;
-
-          appendMsg(text, 'user');
-          input.value = '';
-
-          try {
-            const res = await fetch('/api/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ message: text, email: currentUser })
-            });
-            const data = await res.json();
-            const reply = data.reply || data.error;
-            appendMsg(reply, 'bot');
-            speakText(reply);
-          } catch (e) {
-            appendMsg('Sorry, connection error.', 'bot');
-          }
-        }
-
-        function appendMsg(text, sender) {
-          const box = document.getElementById('chat-box');
-          const div = document.createElement('div');
-          div.className = \`msg \${sender}\`;
-          div.textContent = text;
-          box.appendChild(div);
-          box.scrollTop = box.scrollHeight;
-        }
-      </script>
-    </body>
-    </html>
-  `);
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+          <button class
