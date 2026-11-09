@@ -1,41 +1,33 @@
 {
-  "name": "HereForYou",
+  "name": "HereForYou - חבר תמיד כאן",
   "short_name": "HereForYou",
-  "description": "HereForYou is a warm, dual-language AI companion for elderly users",
-  "lang": "he",
-  "start_url": "./index.html",
-  "scope": "./",
+  "description": "צ'אט קולי לאנשים מבוגרים ובודדים, תזכורת תרופות וחיבור למשפחה ולשירותים באזור",
+  "start_url": "/HereForYou/",
+  "scope": "/HereForYou/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#fdf7ff",
-  "theme_color": "#6a1b9a",
+  "background_color": "#ffffff",
+  "theme_color": "#4A90E2",
+  "lang": "he",
+  "dir": "rtl",
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icons/icon-512x512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ]
 }
-
-"id": "/",
-"categories": ["health", "lifestyle", "social"]
