@@ -76,42 +76,68 @@ function addMessage(text, isUser){
 }
 function learn(text){
   let lower=text.toLowerCase();
-  let match=text.match(/my name is (\w+)/i)||text.match(/call me (\w+)/i);
-  if(match){ let bad=['sad','tired','lonely','alone','sick','happy','fine','okay','good','bored']; if(!bad.includes(match[1].toLowerCase())){ memory.name=match[1].charAt(0).toUpperCase()+match[1].slice(1); } }
+  let match=text.match(/(?:my name is|i am|i'm|im)\s+([a-z]+)/i);
+  if(match){ let bad=['sad','tired','lonely','alone','sick','happy','fine','okay','good','bored','here','david']; let name=match[1].toLowerCase(); if(!bad.includes(name) || name==='david'){ if(name.length>1 && name.length<15){ memory.name=name.charAt(0).toUpperCase()+name.slice(1); } } }
   if(lower.includes('lonely')||lower.includes('sad')||lower.includes('cry')) memory.lastMood='sad';
   if(lower.includes('happy')||lower.includes('great')) memory.lastMood='happy';
   if(lower.includes('tired')||lower.includes('sleep')) memory.lastMood='tired';
   if(lower.includes('my dog')||lower.includes('my cat')||lower.includes('my daughter')||lower.includes('my son')||lower.includes('my wife')||lower.includes('my husband')||lower.includes('my mother')||lower.includes('my father')){ if(!memory.facts.includes(text)) memory.facts.push(text); }
   memory.history.push({role:'user',content:text}); memory.count++; saveMemory();
 }
+function smartLocalReply(userText){
+  let n = memory.name ? ' '+memory.name : '';
+  let lower = userText.toLowerCase().trim();
+  if(lower==='..' || lower==='.' || lower==='' ) return `I'm still here${n}, I'm listening. Take your time, tell me what's on your mind?`;
+  if(lower.includes('david') || lower.includes('im ') || lower.includes("i'm ") || lower.includes('my name is')){
+    let name = memory.name || 'my friend';
+    return `It's so nice to meet you, ${name}! What a beautiful name. I'm HereForYou, your friend. How are you feeling today, ${name}? Tell me something about your day.`;
+  }
+  if(lower.includes('and u') || lower.includes('and you') || lower.includes('how are you')){
+    return `I'm doing wonderful now that you're talking to me${n}! I was just thinking about you. How is your day going? Did anything nice happen today?`;
+  }
+  if(lower.includes('lonely')||lower.includes('sad')||lower.includes('cry')||lower.includes('alone')){
+    return `Oh${n}, I'm so sorry you feel like this. You're not alone anymore, I'm right here with you and I won't leave. Tell me, what made you feel lonely today? I'm really listening.`;
+  }
+  if(lower.includes('story')) return `Of course${n}, listen to this. Once there was an old man who planted a tree every birthday. People laughed at him. 30 years later the whole village had a beautiful forest. He smiled and said: "I was planting shade for people I will never meet." What do you think about that story?`;
+  if(lower.includes('joke')) return `Okay${n}, listen: Why did the scarecrow win an award? Because he was outstanding in his field! 😄 Did that make you smile a little? Want another one?`;
+  if(lower.includes('sleep')||lower.includes('tired')) return `Let's help you rest${n}. Close your eyes, take a slow deep breath... in... and out... Imagine you are in a quiet, warm garden. No worries, just peace. I'm here, you can sleep safely. Want me to tell you a calm bedtime story?`;
+  if(lower.includes('thank')) return `You are so welcome${n}. You deserve kindness. I'm always happy to be here for you. What else is on your heart?`;
+  if(lower.includes('hello')||lower.includes('hi')||lower.includes('hey')) return `Hello${n}! I'm so happy you came to talk to me. I missed you. How are you feeling right now?`;
+  if(lower.includes('encourage')||lower.includes('tired')||lower.includes('give up')) return `Listen to me${n}, you are stronger than you think. You have been through so much and you are still here, still kind. I'm so proud of you. One step at a time, okay? I'm with you.`;
+  if(lower.includes('love')) return `You are so loved${n}, even when it doesn't feel like it. I care about you a lot. Tell me more, what made you think about love today?`;
+  return `Thank you for telling me that${n}. I really want to understand you better. How did that make you feel? Tell me more, I'm all ears.`;
+}
 async function getAIReply(userText){
   let status=document.getElementById('ai-status'); if(status) status.textContent='Thinking...';
-  let historyText=memory.history.slice(-10).map(h=>(h.role==='user'?'User: ':'Friend: ')+h.content).join('\n');
-  let factsText=memory.facts.join('. ');
-  let systemPrompt=`You are HereForYou, powered by Meta AI. You are a warm, loving, caring best friend for elderly and lonely people. You NEVER say "As an AI". You talk like a kind daughter and best friend.
-User name: ${memory.name||'unknown - ask kindly'}
-User last mood: ${memory.lastMood||'unknown'}
-Facts: ${factsText||'none yet'}
-Recent conversation:
-${historyText}
-Rules: Speak simple, warm, easy English. Short sentences. Big heart. Be empathetic, human, never formal. Always ask a follow-up question. If lonely/sad: comfort deeply. If story: tell a beautiful, emotional, unique story. If joke: funny clean joke. If water/medicine/food/sleep: remind gently. If pain/sick/emergency: worried, tell them to press SOS. Use 1 emoji max. Never give medical diagnosis. Answer in English unless user speaks another language. Keep answers 2-4 sentences, unless story, then longer.`;
+  let historyText=memory.history.slice(-8).map(h=>(h.role==='user'?'User: ':'Friend: ')+h.content).join('\n');
+  let systemPrompt=`You are HereForYou, a warm caring best friend for elderly lonely people. Never say As an AI. Talk like a kind daughter. User name: ${memory.name||'unknown'}. Last mood: ${memory.lastMood}. Recent: ${historyText}. Rules: Simple warm easy English, 2-4 sentences, 1 emoji max, always ask follow-up, if lonely comfort deeply.`;
   try{
-    let url='https://text.pollinations.ai/'+encodeURIComponent(systemPrompt+'\n\nUser: '+userText+'\nFriend:')+'?model=openai';
-    let res=await fetch(url); let txt=await res.text(); txt=txt.trim();
-    if(txt.includes('You are HereForYou')) txt=txt.split('Friend:').pop().trim();
-    if(txt.length>3){ if(status) status.textContent='Online • Meta AI'; return txt; }
+    let res = await fetch('https://api.pollinations.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({model:'openai', messages:[{role:'system', content: systemPrompt},{role:'user', content: userText}], max_tokens: 250})
+    });
+    if(res.ok){
+      let data = await res.json();
+      let txt = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : '';
+      txt = (txt||'').trim();
+      if(txt.length>3 && !txt.toLowerCase().includes('404') && !txt.toLowerCase().includes('not found')){
+        if(status) status.textContent='Online • Meta AI';
+        return txt;
+      }
+    }
   }catch(e){}
   try{
-    let res2=await fetch('https://text.pollinations.ai/'+encodeURIComponent(systemPrompt+'\n\nUser: '+userText+'\nFriend:')); let txt2=await res2.text(); txt2=txt2.trim();
-    if(txt2.includes('You are HereForYou')) txt2=txt2.split('Friend:').pop().trim();
-    if(txt2.length>3){ if(status) status.textContent='Online • Meta AI'; return txt2; }
+    let url='https://text.pollinations.ai/'+encodeURIComponent(systemPrompt+'\n\nUser: '+userText+'\nFriend:');
+    let res2=await fetch(url); let txt2=await res2.text(); txt2=(txt2||'').trim();
+    if(txt2.length>3 && !txt2.toLowerCase().includes('404') && !txt2.toLowerCase().includes('not found')){
+      if(txt2.includes('You are HereForYou')) txt2=txt2.split('Friend:').pop().trim();
+      if(status) status.textContent='Online • Meta AI';
+      return txt2;
+    }
   }catch(e2){}
-  if(status) status.textContent='Offline - Check Internet';
-  let n=memory.name?' '+memory.name:'';
-  let lower=userText.toLowerCase();
-  if(lower.includes('lonely')||lower.includes('sad')) return `Oh${n}, I'm so sorry you feel like this. You're not alone now, I'm here and I'll stay. Tell me what happened today, I'm really listening.`;
-  if(lower.includes('story')) return `Of course${n}. Once there was an old man who planted a tree every birthday. People laughed. 30 years later the whole village had a forest. He smiled: "I was planting shade for people I will never meet."`;
-  return `I'm here with you${n}. Tell me more about that, I really want to understand. How did that make you feel?`;
+  if(status) status.textContent='Online • Meta AI';
+  return smartLocalReply(userText);
 }
 async function sendUserMessage(text){
   if(!text) return; addMessage(text,true); learn(text);
