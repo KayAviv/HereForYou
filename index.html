@@ -1,12 +1,9 @@
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#4A90E2">
-
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HereForYou - כאן בשבילך</title>
+<title>HereForYou - Always Here For You</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#6a1b9a">
 <link rel="icon" href="icons/icon-192x192.png">
@@ -28,37 +25,37 @@
   .btn-light { background: #f3e5f5; color: #6a1b9a; }
   .btn-green { background: #2e7d32; color: white; }
   input { width: 100%; font-size: 22px; padding: 15px; border-radius: 15px; border: 2px solid #ddd; text-align: center; }
-  #chat { text-align: right; min-height: 100px; font-size: 21px; line-height: 1.6; }
-  .msg { background: #f3e5f5; padding: 12px 15px; border-radius: 15px; margin: 10px 0; }
+  #chat { text-align: left; min-height: 100px; font-size: 21px; line-height: 1.6; }
+  .msg { background: #f3e5f5; padding: 12px 15px; border-radius: 15px; margin: 10px 0; text-align: left; }
   footer { padding: 20px; color: #888; font-size: 16px; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1 id="title">כאן בשבילך 💜</h1>
-  <p id="subtitle">חברה חמה, פשוטה ובטוחה - לכל יום</p>
+  <h1 id="title">HereForYou 💜</h1>
+  <p id="subtitle">A warm, simple and safe companion - every day</p>
   <div class="lang">
-    <button onclick="setLang('he')">עברית</button>
     <button onclick="setLang('en')">English</button>
+    <button onclick="setLang('he')">עברית</button>
   </div>
 </header>
 
 <div class="container">
   <div class="card">
-    <h2 id="helloTitle">שלום, איך אתה מרגיש היום?</h2>
-    <p id="helloText">אני כאן בשבילך. אפשר לדבר, לשאול, או סתם להגיד שלום.</p>
-    <div id="chat"><div class="msg">שלום! אני כאן בשבילך. איך עבר עליך היום? 😊</div></div>
-    <input id="input" placeholder="כתוב כאן..." onkeydown="if(event.key==='Enter') sendMsg()">
-    <button class="big-btn btn-purple" onclick="sendMsg()">שלח 💬</button>
+    <h2 id="helloTitle">Hello, how are you feeling today?</h2>
+    <p id="helloText">I am here for you. You can talk, ask, or just say hello.</p>
+    <div id="chat"><div class="msg">Hello! I am here for you. How was your day today? 😊</div></div>
+    <input id="input" placeholder="Type here..." onkeydown="if(event.key==='Enter') sendMsg()">
+    <button class="big-btn btn-purple" onclick="sendMsg()">Send 💬</button>
   </div>
 
   <div class="card">
-    <h2 id="helpTitle">מה אפשר לעשות?</h2>
-    <button class="big-btn btn-light" onclick="quick('ספר לי סיפור נחמד')">📖 ספר לי סיפור</button>
-    <button class="big-btn btn-light" onclick="quick('תזכיר לי לשתות מים')">💧 תזכורת לשתות מים</button>
-    <button class="big-btn btn-light" onclick="quick('מה מזג האוויר היום?')">🌤️ מזג אוויר</button>
-    <button class="big-btn btn-green" onclick="alert('אם אתה מרגיש לא טוב, אנא התקשר למשפחה או למוקד 101')">🆘 אני צריך עזרה</button>
+    <h2 id="helpTitle">What can we do?</h2>
+    <button class="big-btn btn-light" onclick="quick('Tell me a nice story')">📖 Tell me a story</button>
+    <button class="big-btn btn-light" onclick="quick('Remind me to drink water')">💧 Remind me to drink water</button>
+    <button class="big-btn btn-light" onclick="quick('What is the weather today?')">🌤️ Weather</button>
+    <button class="big-btn btn-green" onclick="alert('If you feel unwell, please call your family or emergency services (911)')">🆘 I need help</button>
   </div>
 </div>
 
@@ -70,10 +67,10 @@ function sendMsg(){
   let txt = inp.value.trim();
   if(!txt) return;
   let chat = document.getElementById('chat');
-  chat.innerHTML += '<div class="msg"><b>אתה:</b> '+txt+'</div>';
+  chat.innerHTML += '<div class="msg"><b>You:</b> '+txt+'</div>';
   inp.value = '';
   setTimeout(()=>{
-    chat.innerHTML += '<div class="msg">תודה ששיתפת אותי. אני כאן בשבילך תמיד, ספר לי עוד קצת 💜</div>';
+    chat.innerHTML += '<div class="msg">Thank you for sharing. I am always here for you, tell me a little more 💜</div>';
     chat.scrollIntoView({behavior:"smooth"});
   }, 800);
 }
@@ -84,18 +81,22 @@ function quick(t){
 function setLang(l){
   if(l==='en'){
     document.documentElement.dir='ltr';
+    document.documentElement.lang='en';
     document.getElementById('title').innerText='HereForYou 💜';
     document.getElementById('subtitle').innerText='A warm, simple and safe companion - every day';
     document.getElementById('helloTitle').innerText='Hello, how are you feeling today?';
     document.getElementById('helloText').innerText='I am here for you. You can talk, ask, or just say hello.';
     document.getElementById('helpTitle').innerText='What can we do?';
+    document.getElementById('input').placeholder='Type here...';
   } else {
     document.documentElement.dir='rtl';
+    document.documentElement.lang='he';
     document.getElementById('title').innerText='כאן בשבילך 💜';
     document.getElementById('subtitle').innerText='חברה חמה, פשוטה ובטוחה - לכל יום';
     document.getElementById('helloTitle').innerText='שלום, איך אתה מרגיש היום?';
     document.getElementById('helloText').innerText='אני כאן בשבילך. אפשר לדבר, לשאול, או סתם להגיד שלום.';
     document.getElementById('helpTitle').innerText='מה אפשר לעשות?';
+    document.getElementById('input').placeholder='כתוב כאן...';
   }
 }
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
