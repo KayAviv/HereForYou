@@ -1,15 +1,15 @@
 {
-  "name": "HereForYou - חבר תמיד כאן",
+  "name": "HereForYou - Always Here For You",
   "short_name": "HereForYou",
-  "description": "צ'אט קולי לאנשים מבוגרים ובודדים, תזכורת תרופות וחיבור למשפחה ולשירותים באזור",
+  "description": "Voice chat for elderly and lonely people, medicine reminders, and connection to family and local services",
   "start_url": "/HereForYou/",
   "scope": "/HereForYou/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
-  "theme_color": "#4A90E2",
-  "lang": "he",
-  "dir": "rtl",
+  "theme_color": "#6a1b9a",
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     {
       "src": "icons/icon-192x192.png",
