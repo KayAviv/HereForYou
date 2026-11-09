@@ -97,7 +97,7 @@ app.get('/', (req, res) => {
         function appendMsg(text, sender) {
           const box = document.getElementById('chat-box');
           const div = document.createElement('div');
-          div.className = `msg ${sender}`;
+          div.className = \`msg \${sender}\`;
           div.textContent = text;
           box.appendChild(div);
           box.scrollTop = box.scrollHeight;
