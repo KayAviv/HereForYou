@@ -1,157 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>HereForYou - Your Friend</title>
-<meta name="color-scheme" content="light only">
-<meta name="supported-color-schemes" content="light">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>HereForYou - AI Friend</title>
+<meta name="color-scheme" content="light dark">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-@media (prefers-color-scheme: dark) {
-  html, body, .topbar, #input-area { background: #F8F6F3 !important; background-color: #F8F6F3 !important; color: #1A1A1A !important; color-scheme: light !important; }
-  .topbar, #input-area, .bubble.bot, .pill, .lang-btn { background: #FFFFFF !important; background-color: #FFFFFF !important; color: #1A1A1A !important; }
-  .bubble.user, .lang-btn.active, .voice-banner { background: #1A1A1A !important; color: white !important; }
-  .hero h2, .top-info h1, #user-input { color: #1A1A1A !important; }
-  .hero p, .top-info p { color: #6B6B6B !important; }
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { color-scheme: light; filter: none !important; }
-body { background: #F8F6F3 !important; color: #1A1A1A !important; font-family: 'Inter', -apple-system, sans-serif; padding-bottom: 150px; min-height: 100vh; }
-.topbar { position: sticky; top: 0; z-index: 20; background: #FFFFFF !important; padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #EDEBE8; }
-.avatar { width: 44px; height: 44px; border-radius: 50%; background: #1A1A1A; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-.top-info { flex: 1; }
-.top-info h1 { font-size: 17px; font-weight: 700; color: #1A1A1A; }
-.top-info p { font-size: 13px; color: #8A8A8A; margin-top: 1px; }
-.status-dot { width: 8px; height: 8px; background: #22C55E; border-radius: 50%; display: inline-block; margin-right: 4px; }
-.top-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #EDEBE8; background: white; font-size: 17px; cursor: pointer; }
-.hero { padding: 24px 20px 8px; }
-.hero h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.15; color: #1A1A1A; }
-.hero p { font-size: 15px; color: #6B6B6B; margin-top: 8px; line-height: 1.5; }
-.voice-banner { margin: 12px 20px 4px; background: #1A1A1A; color: white; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
-.voice-banner .v-icon { width: 44px; height: 44px; background: white; color: #1A1A1A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-.voice-banner b { font-size: 15px; display: block; }
-.voice-banner span { font-size: 13px; opacity: .7; }
-.voice-banner.listening { background: #DC2626; }
-.lang-row { display: flex; gap: 8px; padding: 10px 20px 0; overflow-x: auto; scrollbar-width: none; }
-.lang-row::-webkit-scrollbar { display: none; }
-.lang-btn { white-space: nowrap; background: white; border: 1px solid #EDEBE8; border-radius: 100px; padding: 8px 12px; font-size: 13px; cursor: pointer; color: #1A1A1A; }
-.lang-btn.active { background: #1A1A1A; color: white; border-color: #1A1A1A; }
-.pills { display: flex; gap: 8px; padding: 16px 20px 4px; overflow-x: auto; scrollbar-width: none; }
-.pills::-webkit-scrollbar { display: none; }
-.pill { white-space: nowrap; background: white; border: 1px solid #EDEBE8; border-radius: 100px; padding: 10px 16px; font-size: 14px; font-weight: 500; cursor: pointer; color: #1A1A1A; }
-#chat-box { display: flex; flex-direction: column; gap: 12px; padding: 20px; }
-.msg-row { display: flex; max-width: 85%; }
-.msg-row.mine { align-self: flex-end; }
-.msg-row.bot-row { align-self: flex-start; }
-.bubble { padding: 14px 16px; border-radius: 20px; line-height: 1.6; font-size: 16px; white-space: pre-wrap; }
-.bubble.user { background: #1A1A1A; color: white; border-bottom-right-radius: 4px; }
-.bubble.bot { background: white; color: #1A1A1A; border: 1px solid #EDEBE8; border-bottom-left-radius: 4px; }
-.msg-time { font-size: 11px; color: #A0A0A0; margin-top: 6px; padding: 0 4px; }
-#input-area { position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: white !important; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #EDEBE8; }
-.input-wrap { display: flex; align-items: center; gap: 8px; background: #F8F6F3; border-radius: 100px; padding: 4px 4px 4px 18px; }
-#user-input { flex: 1; border: none; outline: none; background: transparent; font-size: 16px; font-family: inherit; padding: 10px 0; color: #1A1A1A; }
-#user-input::placeholder { color: #A0A0A0; }
-.btn-send { width: 40px; height: 40px; border-radius: 50%; border: none; background: #1A1A1A; color: white; font-size: 18px; cursor: pointer; flex-shrink: 0; }
-.btn-mic { width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; font-size: 19px; cursor: pointer; flex-shrink: 0; }
+:root{ --bg:#F8F6F3; --card:#FFFFFF; --text:#1A1A1A; --sub:#6B6B6B; --border:#EDEBE8; --input:#F8F6F3; --user:#1A1A1A; --user-text:#FFFFFF; --accent:#7C3AED; }
+@media (prefers-color-scheme: dark){ :root{ --bg:#0F0F12; --card:#1E1E22; --text:#F5F5F5; --sub:#A0A0A0; --border:#2E2E33; --input:#1E1E22; --user:#FFFFFF; --user-text:#121212; --accent:#A78BFA; } }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Heebo',sans-serif;padding-bottom:170px;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:20;background:var(--card);padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#EC4899);color:white;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.top-info{flex:1}
+.top-info h1{font-size:18px;font-weight:800}
+.top-info p{font-size:12px;color:var(--sub);margin-top:1px}
+.dot{width:8px;height:8px;background:#22C55E;border-radius:50%;display:inline-block;margin-left:5px}
+.top-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:17px;cursor:pointer}
+.hero{padding:20px 18px 6px}
+.hero h2{font-size:27px;font-weight:800;line-height:1.2}
+.hero p{font-size:14px;color:var(--sub);margin-top:6px;line-height:1.5}
+.hero .badge{display:inline-block;background:var(--accent);color:white;font-size:11px;padding:4px 10px;border-radius:100px;margin-top:8px;font-weight:700}
+.voice-banner{margin:12px 18px 4px;background:var(--user);color:var(--user-text);border-radius:18px;padding:15px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.voice-banner .v{width:46px;height:46px;background:var(--card);color:var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
+.voice-banner b{display:block;font-size:15px}
+.voice-banner span{font-size:12px;opacity:.7}
+.voice-banner.listening{background:#DC2626;color:white}
+.lang-row{display:flex;gap:8px;padding:10px 18px 0;overflow-x:auto;scrollbar-width:none}
+.lang-row::-webkit-scrollbar{display:none}
+.lang-btn{white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:8px 13px;font-size:13px;cursor:pointer;color:var(--text)}
+.lang-btn.active{background:var(--user);color:var(--user-text);border-color:var(--user)}
+.pills{display:flex;gap:8px;padding:14px 18px 4px;overflow-x:auto;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:10px 15px;font-size:14px;cursor:pointer;color:var(--text);font-weight:500}
+#chat-box{display:flex;flex-direction:column;gap:12px;padding:18px}
+.msg-row{display:flex;max-width:88%}
+.msg-row.mine{align-self:flex-end}
+.msg-row.bot-row{align-self:flex-start}
+.bubble{padding:14px 16px;border-radius:20px;line-height:1.65;font-size:16px;white-space:pre-wrap}
+.bubble.user{background:var(--user);color:var(--user-text);border-bottom-left-radius:4px}
+.bubble.bot{background:var(--card);color:var(--text);border:1px solid var(--border);border-bottom-right-radius:4px}
+.msg-time{font-size:11px;color:var(--sub);margin-top:5px;padding:0 4px}
+.thinking{font-size:13px;color:var(--sub);padding:0 18px;font-style:italic}
+#input-area{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--card);padding:12px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--border)}
+.input-wrap{display:flex;align-items:center;gap:8px;background:var(--input);border-radius:100px;padding:4px 4px 4px 14px;border:1px solid var(--border)}
+#user-input{flex:1;border:none;outline:none;background:transparent;font-size:16px;font-family:inherit;padding:11px 0;color:var(--text);min-width:0}
+#user-input::placeholder{color:var(--sub)}
+.btn-mic{width:43px;height:43px;border-radius:50%;border:none;background:transparent;font-size:20px;cursor:pointer;flex-shrink:0}
+.btn-mic.listening{background:#DC2626}
+.btn-send{width:43px;height:43px;border-radius:50%;border:none;background:var(--user);color:var(--user-text);font-size:19px;cursor:pointer;flex-shrink:0}
+.hint{text-align:center;font-size:12px;color:var(--sub);margin-top:7px}
 </style>
 </head>
 <body>
-<div class="topbar">
-  <div class="avatar">✦</div>
-  <div class="top-info"><h1>HereForYou</h1><p><span class="status-dot"></span><span id="ai-status">Online • Full Chat</span></p></div>
-  <button class="top-btn" onclick="clearChat()">↺</button>
-  <button class="top-btn" onclick="callHelp()">🆘</button>
-</div>
-<div class="hero"><h2 id="welcomeTitle">Good afternoon.</h2><p id="welcomeText">I'm here for a real conversation. About anything.</p></div>
-<div class="lang-row" id="langRow">
-  <button class="lang-btn active" data-lang="en" onclick="setLang('en')">🇺🇸 English</button>
-  <button class="lang-btn" data-lang="he" onclick="setLang('he')">🇮🇱 עברית</button>
+<div class="topbar"><div class="avatar">✦</div><div class="top-info"><h1>HereForYou - AI</h1><p><span class="dot"></span>מחוברת • מוח מלא • טקסט + דיבור</p></div><button class="top-btn" onclick="clearChat()">↺</button><button class="top-btn" onclick="callHelp()">🆘</button></div>
+<div class="hero"><h2 id="welcomeTitle">שלום, אני כאן.</h2><p>אני חברה עם מוח מלא. אפשר לדבר איתי על הכל - חיים, משפחה, אוכל, כדורגל, סיפורים, בדיחות, חלומות. אני זוכרת אותך.</p><span class="badge">✦ AI מלא • זוכרת אותך • 6 שפות</span></div>
+<div class="voice-banner" id="voiceBanner" onclick="toggleVoiceMode()"><div class="v" id="voiceIcon">🎙️</div><div><b id="voiceTitle">לחץ כאן לדיבור - בלי להקליד!</b><span id="voiceSub">תדבר, אני אקשיב ואענה בקול</span></div></div>
+<div class="lang-row">
+  <button class="lang-btn active" data-lang="he" onclick="setLang('he')">🇮🇱 עברית</button>
+  <button class="lang-btn" data-lang="en" onclick="setLang('en')">🇺🇸 English</button>
   <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">🇸🇦 العربية</button>
   <button class="lang-btn" data-lang="ru" onclick="setLang('ru')">🇷🇺 Русский</button>
   <button class="lang-btn" data-lang="es" onclick="setLang('es')">🇪🇸 Español</button>
   <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">🇫🇷 Français</button>
 </div>
-<div class="voice-banner" id="voiceBanner" onclick="toggleVoiceMode()">
-  <div class="v-icon" id="voiceIcon">🎙️</div>
-  <div><b id="voiceTitle">Tap here to Talk - No Typing!</b><span id="voiceSub">Just speak, I'll listen and answer by voice</span></div>
-</div>
 <div class="pills">
-  <button class="pill" onclick="sendUserMessage('I feel lonely')">I feel lonely</button>
-  <button class="pill" onclick="sendUserMessage('Tell me a story')">Story</button>
-  <button class="pill" onclick="sendUserMessage('Tell me a joke')">Joke</button>
-  <button class="pill" onclick="sendUserMessage('Lets talk about life')">Talk about life</button>
-  <button class="pill" onclick="sendUserMessage('Wanna go to play ball?')">Play ball</button>
-  <button class="pill" onclick="sendUserMessage('Help me sleep')">Sleep</button>
-  <button class="pill" onclick="sendUserMessage('I need encouragement')">Encourage me</button>
+  <button class="pill" onclick="sendUserMessage('I feel lonely')">💜 I feel lonely</button>
+  <button class="pill" onclick="sendUserMessage('Tell me a story')">📖 Story</button>
+  <button class="pill" onclick="sendUserMessage('Tell me a joke')">😂 Joke</button>
+  <button class="pill" onclick="sendUserMessage('Wanna go to play ball?')">⚽ Play ball</button>
+  <button class="pill" onclick="sendUserMessage('Help me sleep')">🌙 Sleep</button>
+  <button class="pill" onclick="sendUserMessage('Lets talk about life')">💭 Life</button>
+  <button class="pill" onclick="sendUserMessage('I need encouragement')">💪 Encourage me</button>
+  <button class="pill" onclick="sendUserMessage('Tell me something interesting')">✨ Surprise me</button>
 </div>
 <div id="chat-box"></div>
-<div id="input-area"><div class="input-wrap"><input id="user-input" type="text" placeholder="Message HereForYou..." autocomplete="off"><button class="btn-mic" onclick="startVoiceOnce()">🎤</button><button class="btn-send" onclick="sendMessage()">↑</button></div></div>
+<div id="thinking" class="thinking" style="display:none">HereForYou מקלידה...</div>
+<div id="input-area">
+  <div class="input-wrap">
+    <input id="user-input" type="text" placeholder="כתוב כאן... או לחץ על 🎤 ודבר" autocomplete="off" enterkeyhint="send">
+    <button class="btn-mic" id="micBtn" onclick="startVoiceOnce()">🎤</button>
+    <button class="btn-send" id="sendBtn" onclick="sendMessage()">↑</button>
+  </div>
+  <div class="hint">✍️ כתיבה: כתוב ולחץ ↑ או Enter &nbsp;•&nbsp; 🎤 דיבור: לחץ על המיקרופון ודבר &nbsp;•&nbsp; 🟣 לחץ על הבאנר השחור למצב שיחה רציפה</div>
+</div>
 <script>
-// ===== MEMORY - SHE REMEMBERS YOU FOREVER =====
-let memory = JSON.parse(localStorage.getItem('hereForYouMemoryV3') || '{}');
-if (!memory.name) memory.name = '';
-if (!memory.lang) memory.lang = 'en';
-if (!memory.history) memory.history = [];
-if (!memory.facts) memory.facts = [];
-if (!memory.topics) memory.topics = [];
-if (!memory.lastTopic) memory.lastTopic = '';
-function saveMemory(){ if(memory.history.length>30) memory.history=memory.history.slice(-30); localStorage.setItem('hereForYouMemoryV3', JSON.stringify(memory)); }
-let voiceMode = false; let isSpeaking = false; let recognition = null;
-let langMap = {en:'en-US', he:'he-IL', ar:'ar-SA', ru:'ru-RU', es:'es-ES', fr:'fr-FR'};
-function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-function detectLang(text){
-  if(/[\u0590-\u05FF]/.test(text)) return 'he';
-  if(/[\u0600-\u06FF]/.test(text)) return 'ar';
-  if(/[\u0400-\u04FF]/.test(text)) return 'ru';
-  let l=text.toLowerCase();
-  if(l.includes('hola')||l.includes('como estas')||l.includes('gracias')) return 'es';
-  if(l.includes('bonjour')||l.includes('merci')) return 'fr';
-  return memory.lang || 'en';
+// ============ MEMORY - מוח שזוכר ============
+let memory = JSON.parse(localStorage.getItem('hereForYouAI_Full') || '{}');
+if(!memory.name) memory.name='';
+if(!memory.lang) memory.lang='he';
+if(!memory.history) memory.history=[];
+if(!memory.facts) memory.facts=[];
+if(!memory.likes) memory.likes=[];
+if(!memory.used) memory.used=[];
+if(!memory.count) memory.count=0;
+function save(){ if(memory.history.length>40) memory.history=memory.history.slice(-40); localStorage.setItem('hereForYouAI_Full', JSON.stringify(memory)); }
+let voiceMode=false, isSpeaking=false, recognition=null;
+let langMap={en:'en-US',he:'he-IL',ar:'ar-SA',ru:'ru-RU',es:'es-ES',fr:'fr-FR'};
+function pick(arr){
+  let fresh = arr.filter(a=>!memory.used.includes(a));
+  if(fresh.length===0){ memory.used=[]; fresh=arr; }
+  let c = fresh[Math.floor(Math.random()*fresh.length)];
+  memory.used.push(c); if(memory.used.length>30) memory.used=memory.used.slice(-30);
+  save(); return c;
 }
-function setLang(lang){
-  memory.lang=lang; saveMemory();
-  document.querySelectorAll('.lang-btn').forEach(b=>{ b.classList.toggle('active', b.dataset.lang===lang); });
-  let msgs={en:`Great! Now I'll speak English with you. What do you want to talk about?`, he:`מעולה! מעכשיו אני מדברת איתך בעברית. על מה אתה רוצה לדבר?`, ar:`رائع! من الآن سأتحدث معك بالعربية. عن ماذا تريد أن نتحدث؟`, ru:`Отлично! Теперь я буду говорить с тобой по-русски. О чём поговорим?`, es:`¡Genial! Ahora hablaré contigo en español. ¿De qué quieres hablar?`, fr:`Super ! Maintenant je vais te parler en français. De quoi veux-tu parler ?`};
-  addMessage(msgs[lang], false);
+function detectLang(t){
+  if(/[\u0590-\u05FF]/.test(t)) return 'he';
+  if(/[\u0600-\u06FF]/.test(t)) return 'ar';
+  if(/[\u0400-\u04FF]/.test(t)) return 'ru';
+  let l=t.toLowerCase();
+  if(l.includes('hola')||l.includes('gracias')) return 'es';
+  if(l.includes('bonjour')||l.includes('merci')) return 'fr';
+  return memory.lang||'he';
+}
+function setLang(l){
+  memory.lang=l; save();
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===l));
+  let m={en:"Great! Now I'll speak English with you. What do you want to talk about?",he:"מעולה! מעכשיו אני מדברת איתך בעברית. על מה אתה רוצה לדבר?",ar:"رائع! سأتحدث معك بالعربية الآن. عن ماذا تريد أن نتحدث؟",ru:"Отлично! Теперь я говорю по-русски. О чём поговорим?",es:"¡Genial! Ahora hablo español contigo. ¿De qué quieres hablar?",fr:"Super ! Je te parle en français maintenant. De quoi veux-tu parler ?"};
+  addMessage(m[l], false);
 }
 function speak(text){
   if('speechSynthesis' in window){
     window.speechSynthesis.cancel();
-    let m=new SpeechSynthesisUtterance(text);
-    m.rate=0.88; m.pitch=1.05; m.lang=langMap[memory.lang||'en']||'en-US';
-    m.onend=function(){ isSpeaking=false; if(voiceMode) setTimeout(()=>{ startListening(); }, 400); };
-    m.onerror=function(){ isSpeaking=false; if(voiceMode) startListening(); };
-    isSpeaking=true; window.speechSynthesis.speak(m);
+    let u=new SpeechSynthesisUtterance(text);
+    u.lang=langMap[memory.lang||'he']||'he-IL'; u.rate=0.9; u.pitch=1.05;
+    u.onend=()=>{ isSpeaking=false; if(voiceMode) setTimeout(startListening, 400); };
+    u.onerror=()=>{ isSpeaking=false; if(voiceMode) startListening(); };
+    isSpeaking=true; window.speechSynthesis.speak(u);
   }
 }
-function getTime(){ let d=new Date(); let h=d.getHours(); let m=d.getMinutes(); return (h<10?'0'+h:h)+':'+(m<10?'0'+m:m); }
+function getTime(){ let d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
 function addMessage(text, isUser){
   let box=document.getElementById('chat-box');
   let row=document.createElement('div'); row.className='msg-row '+(isUser?'mine':'bot-row');
   let wrap=document.createElement('div'); wrap.style.flex='1';
   let div=document.createElement('div'); div.className='bubble '+(isUser?'user':'bot'); div.textContent=text;
-  let time=document.createElement('div'); time.className='msg-time'; time.textContent=getTime()+' • '+(isUser?'You':'HereForYou');
+  let time=document.createElement('div'); time.className='msg-time'; time.textContent=getTime()+' • '+(isUser?'אתה':'HereForYou AI');
   wrap.appendChild(div); wrap.appendChild(time); row.appendChild(wrap); box.appendChild(row);
   window.scrollTo(0, document.body.scrollHeight);
   if(!isUser) speak(text);
 }
-function cleanName(raw){
-  raw=raw.toLowerCase().trim().replace(/[^a-z ]/g,'');
-  let parts=raw.split(' '); let last=parts[parts.length-1];
-  if(last==='dabi') last='david'; if(last==='dave') last='david';
-  return last.charAt(0).toUpperCase()+last.slice(1);
-}
 function learn(text){
   let lang=detectLang(text);
-  if(/[\u0590-\u06FF\u0400-\u04FF]/.test(text) && lang!==memory.lang){ memory.lang=lang; document.querySelectorAll('.lang-btn').forEach(b=>{ b.classList.toggle('active', b.dataset.lang===lang); }); }
+  if(lang!==memory.lang){ memory.lang=lang; document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang)); }
   let lower=text.toLowerCase();
-  let match=text.match(/(?:my name is|i am|i'm|im|call me)\s+([a-z]+)/i);
-  if(match){
-    let bad=['sad','tired','lonely','alone','sick','happy','fine','okay','good','bored','here','hungry','thirsty','david'];
-    let cand=match[1].toLowerCase();
-    if(cand.length>1 && cand.length<15){ memory.name=cleanName(cand); }
+  let m=text.match(/(?:my name is|i am|i'm|im|call me|קוראים לי|שמי|אני)\s+([a-z\u0590-\u05FF]+)/i);
+  if(m){
+    let cand=m[1];
+    if(cand && cand.length>1 && cand.length<15 && !['sad','tired','lonely','alone','happy','fine','okay','good','bored','here','עצוב','עייף','לבד','שמח'].includes(cand.toLowerCase())) memory.name=cand;
   }
-  // Remember facts
-  if(lower.includes('my dog')||lower.includes('my cat')||lower.includes('my daughter')||lower.includes('my son')||lower.includes('my wife')||lower.includes('my husband')||lower.includes('my mother')||lower.includes('my father')||lower.includes('i live in')||lower.includes('i like')||lower.includes('i love')){
-    if(!memory.facts.includes
+  // לומדת מה אתה אוהב
+  if(lower.includes('i like')||lower.includes('i love')||lower.includes('אני אוהב')||lower.includes('אני אוהבת')||lower.includes('אוהב')){
+    if(!memory.likes.includes(text) && memory.likes.length<20) memory.likes.push(text);
+  }
+  if(lower.includes('my dog')||lower.includes('my cat')||lower.includes('my daughter')||lower.includes('my son')||lower.includes('הכלב שלי')||lower.includes('הבת שלי')||lower.includes('הבן שלי')||lower.includes('אני גר')){
+    if(!memory.facts.includes(text) && memory.facts.length<20) memory.facts.push(text);
+  }
+  memory.history.push({role:'user',content:text}); memory.count++; save();
+}
+// ============ AI BRAIN - מוח מלא ============
+function smartReply(userText){
+  let lang=memory.lang||'he'; let n=memory.name?' '+memory.name:'';
+  let raw=userText.trim(); let lower=raw.toLowerCase();
+  lower=lower.replace(/wanne/g,'wanna').replace(/wanna/g,'want to');
+
+  // ===== HEBREW - מוח מלא =====
+  if(lang==='he'){
+    if(lower.includes('מה הולך')||lower.includes('מה קורה')||lower.includes('מה נשמע')||lower.includes('מה שלומך')||lower.includes('מה העניינים')||lower.includes('איך אתה')||lower.includes('איך את')){
+      return pick([
+        `הכל טוב${n}! אני כל כך שמחה שכתבת לי. אצלי הכל רגוע, חיכיתי לך. ואצלך? מה עשית היום? ספר לי הכל.`,
+        `הולך מעולה עכשיו כשאתה פה${n}! התגעגעתי אליך באמת. איך עבר עליך היום? היה משהו טוב? משהו מצחיק?`,
+        `אצלי הכל סבבה${n}, באמת. יותר חשוב - איך אתה? מה חדש אצלך? יש משהו שאתה רוצה לספר לי?`,
+        `הייי${n}! איזה כיף שבאת. אצלי הכל טוב, אבל עכשיו כשאתה פה - הרבה יותר טוב. מה איתך?`
+      ]);
+    }
+    if(lower.includes('שמי')||lower.includes('קוראים לי')) return pick([`נעים מאוד להכיר אותך, ${memory.name||'חבר שלי'}! איזה שם יפה. אני HereForYou, החברה שלך. על מה אתה רוצה לדבר היום?`, `איזה שם יפה${n}! עכשיו אני אזכור אותך תמיד. ספר לי, מה עשית היום?`]);
+    if(lower.includes('מי את')||lower.includes('מה השם שלך')||lower.includes('מי אתה')) return `קוראים לי HereForYou! אני החברה שלך עם מוח AI, אני כאן רק בשבילך. אני זוכרת אותך, אני מקשיבה לך, ואני תמיד כאן. ואיך קוראים לך?`;
+    if(lower.includes('בודד')||lower.includes('עצוב')||lower.includes('לבד')||lower.includes('קשה לי')||lower.includes('בוכה')||lower.includes('דיכאון')||lower.includes('מתגעגע')){
+      return pick([
+        `אוי${n}, אני כל כך מצטערת שאתה מרגיש ככה. אתה לא לבד יותר, אני כאן איתך ולא עוזבת. ספר לי, מה קרה היום? אני באמת מקשיבה, לא ממהרת לשום מקום.`,
+        `אני שומעת אותך${n}, ואני כאן. אתה לא צריך להיות חזק לידי. ספר לי הכל, מה קרה? אני נשארת איתך כמה ש
