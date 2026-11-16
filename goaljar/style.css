@@ -1,0 +1,139 @@
+/* GoalJar — bright, friendly, parent-trustworthy. */
+:root{
+  --bg:#fff8ec; --card:#ffffff; --ink:#2d2a32; --soft:#6f6a7a;
+  --green:#22b573; --green-d:#159a5f; --teal:#17a2b8; --orange:#ff9f43;
+  --pink:#ff6b9d; --purple:#7c6cf0; --gold:#ffc93d; --red:#ff6b6b;
+  --spend:#ff9f43; --save:#22b573; --give:#ff6b9d;
+  --radius:22px; --shadow:0 8px 24px rgba(90,70,20,.10);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+  background:
+    radial-gradient(600px 300px at 15% -50px, #ffe9b8 0%, transparent 60%),
+    radial-gradient(700px 340px at 90% -60px, #d8f5e3 0%, transparent 60%),
+    var(--bg);
+  color:var(--ink); min-height:100vh;
+}
+#app{max-width:560px;margin:0 auto;padding:18px 16px 110px}
+h1,h2,h3{margin:.2em 0 .4em;line-height:1.15}
+h1{font-size:2rem} h2{font-size:1.35rem} h3{font-size:1.08rem}
+p{line-height:1.45}
+.small{font-size:.86rem;color:var(--soft)}
+.center{text-align:center}
+.hidden{display:none!important}
+
+/* header */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.35rem}
+.logo .jarlogo{font-size:1.9rem;filter:drop-shadow(0 3px 4px rgba(0,0,0,.15))}
+.pill{display:inline-block;background:#fff;border:2px solid #f0e4c8;border-radius:999px;
+  padding:4px 12px;font-size:.82rem;font-weight:700;color:var(--soft)}
+
+/* cards & buttons */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:18px;margin:12px 0;border:2px solid #fdf3da}
+button{font:inherit;cursor:pointer;border:none;border-radius:16px;font-weight:700;
+  padding:12px 18px;background:#f1ead9;color:var(--ink);transition:transform .08s ease, box-shadow .15s ease}
+button:active{transform:scale(.97)}
+button.primary{background:var(--green);color:#fff;box-shadow:0 6px 0 var(--green-d)}
+button.primary:active{box-shadow:0 2px 0 var(--green-d)}
+button.gold{background:var(--gold);color:#5b4300;box-shadow:0 6px 0 #e0aa12}
+button.ghost{background:#fff;border:2px solid #eee0bd}
+button.danger{background:#ffe3e3;color:#c0392b}
+button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+button.big{font-size:1.1rem;padding:15px 22px;border-radius:20px;width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1}
+input,select{font:inherit;padding:12px 14px;border:2px solid #eadfc2;border-radius:14px;
+  background:#fffdf6;width:100%;margin:4px 0 10px}
+label{font-weight:700;font-size:.9rem}
+
+/* profile picker */
+.kidgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.kidcard{background:#fff;border-radius:26px;box-shadow:var(--shadow);padding:22px 12px;
+  text-align:center;border:3px solid transparent;cursor:pointer;transition:transform .1s}
+.kidcard:active{transform:scale(.96)}
+.kidcard .avatar{font-size:3.2rem;width:84px;height:84px;margin:0 auto 8px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center}
+.kidcard .kname{font-weight:800;font-size:1.15rem}
+
+/* tab bar */
+.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:40;
+  display:flex;gap:4px;background:#fff;border-radius:999px;box-shadow:0 10px 30px rgba(60,40,0,.18);
+  padding:6px;border:2px solid #f3e7c6;max-width:94vw;overflow-x:auto}
+.tabbar button{background:transparent;box-shadow:none;padding:10px 13px;border-radius:999px;
+  font-size:.86rem;white-space:nowrap;color:var(--soft)}
+.tabbar button.on{background:var(--green);color:#fff}
+
+/* jars */
+.totalcard{background:linear-gradient(135deg,#22b573,#17a2b8);color:#fff;border:none;text-align:center}
+.totalcard .amount{font-size:2.4rem;font-weight:900;letter-spacing:.5px}
+.jars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.jarwrap{text-align:center}
+.jar{position:relative;width:74px;height:96px;margin:0 auto;border:4px solid #d9d2c2;border-top-width:8px;
+  border-radius:14px 14px 20px 20px;background:#fffef9;overflow:hidden}
+.jar .fill{position:absolute;left:0;right:0;bottom:0;transition:height .8s cubic-bezier(.2,.9,.3,1.2)}
+.jar .fill.spend{background:linear-gradient(180deg,#ffc37a,var(--spend))}
+.jar .fill.save{background:linear-gradient(180deg,#5edda6,var(--save))}
+.jar .fill.give{background:linear-gradient(180deg,#ff9dbc,var(--give))}
+.jar .bub{position:absolute;border-radius:50%;background:rgba(255,255,255,.5);animation:rise 3s infinite ease-in}
+@keyframes rise{0%{transform:translateY(0);opacity:0}25%{opacity:.8}100%{transform:translateY(-70px);opacity:0}}
+.jarlabel{font-weight:800;margin-top:6px;font-size:.92rem}
+.jaramount{font-weight:700;color:var(--soft);font-size:.9rem}
+
+/* goal jar (big) */
+.goaljar{width:110px;height:140px;border-width:5px;border-top-width:11px;border-radius:18px 18px 26px 26px}
+.goaljar .fill{background:linear-gradient(180deg,#7ce7b4,var(--green))}
+.progressbar{height:14px;background:#f3ead2;border-radius:999px;overflow:hidden;margin:8px 0}
+.progressbar>div{height:100%;background:linear-gradient(90deg,var(--green),var(--teal));border-radius:999px;transition:width .6s ease}
+
+/* lists */
+.item{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid #f7ecd2;
+  border-radius:18px;padding:12px 14px;margin:8px 0}
+.item .ic{font-size:1.6rem}
+.item .grow{flex:1;min-width:0}
+.item .amt{font-weight:800}
+.amt.pos{color:var(--green-d)} .amt.neg{color:var(--red)}
+.badgechip{display:inline-flex;flex-direction:column;align-items:center;gap:2px;background:#fff8e6;
+  border:2px solid #ffe1a1;border-radius:16px;padding:10px 6px;font-size:.74rem;font-weight:700;text-align:center}
+.badgechip .bic{font-size:1.7rem}
+.badgechip.locked{opacity:.35;filter:grayscale(1)}
+.badgegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+
+/* lessons */
+.lessoncard{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:#fff;
+  border:2px solid #f7ecd2;border-radius:18px;padding:14px;box-shadow:none}
+.lessoncard .ic{font-size:1.9rem}
+.lessoncard.done{border-color:#bfe9d2;background:#f4fff8}
+.lessoncard.locked{opacity:.55}
+
+/* modal / pin */
+.overlay{position:fixed;inset:0;background:rgba(45,35,10,.45);display:flex;align-items:center;
+  justify-content:center;z-index:60;padding:16px;backdrop-filter:blur(2px)}
+.sheet{background:#fff;border-radius:26px;max-width:440px;width:100%;max-height:88vh;overflow-y:auto;
+  padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.25);animation:pop .18s ease}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px;margin:14px auto}
+.pinpad button{font-size:1.35rem;padding:15px 0;background:#fdf6e0;border:2px solid #f0e2ba;border-radius:18px}
+.pindots{font-size:1.6rem;letter-spacing:10px;text-align:center;min-height:34px}
+.quizopt{display:block;width:100%;text-align:left;margin:8px 0;background:#fdf6e0;border:2px solid #f0e2ba}
+.quizopt.right{background:#d9f7e7;border-color:var(--green)}
+.quizopt.wrong{background:#ffe3e3;border-color:var(--red)}
+.chip{display:inline-block;padding:8px 14px;border-radius:999px;border:2px solid #eadfc2;background:#fff;
+  font-weight:700;cursor:pointer;margin:3px;font-size:.9rem}
+.chip.on{background:var(--purple);border-color:var(--purple);color:#fff}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:80;background:#2d2a32;
+  color:#fff;padding:12px 20px;border-radius:999px;font-weight:700;box-shadow:0 10px 24px rgba(0,0,0,.3);
+  animation:pop .2s ease;max-width:92vw;text-align:center}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
+.confetti span{position:absolute;top:-40px;font-size:1.6rem;animation:fall 2.4s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(340deg)}}
+.splitbar{display:flex;height:18px;border-radius:999px;overflow:hidden;background:#f3ead2}
+.splitbar .need{background:var(--teal)} .splitbar .want{background:var(--pink)}
+.paywall{background:linear-gradient(160deg,#fff3cf,#ffe6f2);border:2px solid var(--gold)}
+.price{font-size:2rem;font-weight:900}
+.avatarpick{display:flex;gap:8px;flex-wrap:wrap}
+.avatarpick .chip{font-size:1.4rem;padding:8px 12px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
