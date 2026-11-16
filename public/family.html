@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HereForYou — Family View</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<section class="screen">
+  <div class="auth-wrap" style="padding-top:8px">
+    <div class="logo-circle">❤️</div>
+    <h1 class="app-name" style="font-size:1.8rem">Family view</h1>
+  </div>
+  <div id="content"><p class="explain">Loading…</p></div>
+</section>
+<script>
+const code = new URLSearchParams(location.search).get('code') || '';
+const $c = document.getElementById('content');
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function when(ts){ if(!ts) return 'not yet'; const d=new Date(ts); return d.toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}); }
+async function load(){
+  try{
+    const res = await fetch('/api/family/' + encodeURIComponent(code));
+    const d = await res.json();
+    if(!res.ok) throw new Error(d.error || 'Not found');
+    const meds = d.todaysMedications.length ? d.todaysMedications.map(m=>{
+      const pill = m.status==='taken' ? '<span class="pill pill-taken">Taken ✓</span>' : m.status==='missed' ? '<span class="pill pill-missed">Not taken yet</span>' : m.status==='due' ? '<span class="pill pill-due">Due now</span>' : '<span class="pill pill-later">Later</span>';
+      return `<div class="med-card ${m.status}"><div class="med-name">${esc(m.name)}</div><div class="med-meta">${esc(m.dose||'')} · at ${m.time}</div><div>${pill}</div></div>`;
+    }).join('') : '<p class="empty-note">No medicines scheduled for today.</p>';
+    const appt = d.nextAppointment ? `<div class="banner">📅 Next appointment: ${esc(d.nextAppointment.title)} on ${d.nextAppointment.date}${d.nextAppointment.time ? ' at ' + d.nextAppointment.time : ''}</div>` : '';
+    const win = d.silenceHours || 24;
+    const quiet = d.hoursSinceActivity >= Math.max(4, win / 2) ? `<div class="banner banner-due">⚠️ No activity for about ${d.hoursSinceActivity} hours. The safety text is set to send at ${win} hours — but a call now is never a bad idea.</div>` : '';
+    const choices = (d.silenceChoices || [4,12,24,48]).map(h =>
+      `<button class="btn btn-choice ${h === win ? 'selected' : ''}" data-h="${h}">${h} hours</button>`).join('');
+    $c.innerHTML = `
+      <h2 class="greeting" style="font-size:1.6rem">${esc(d.elder.name)}</h2>
+      ${quiet}
+      <div class="card">
+        <h4>Daily check-in</h4>
+        <p class="explain">${d.checkedInToday ? '✅ Checked in today — all good.' : 'Not checked in yet today.'}<br>Last check-in: <b>${when(d.lastCheckinAt)}</b><br>Last app activity: <b>${when(d.lastActivityAt)}</b></p>
+      </div>
+      ${appt}
+      <div class="card">
+        <h4>⏰ Safety check timing</h4>
+        <p class="explain">If ${esc(d.elder.name.split(' ')[0])} doesn't check in or use the app for this long, we text the family contacts. Right now it's set to <b>${win} hours</b>.</p>
+        <div class="silence-choices">${choices}</div>
+        <p id="fam-silence-status" class="status-line" style="text-align:left"></p>
+      </div>
+      <h3 class="section-title">Today's medicines</h3>
+      ${meds}
+      <p class="explain" style="margin-top:20px">This page refreshes itself every minute. Family can look and set the safety check timing — everything else can only be changed by ${esc(d.elder.name.split(' ')[0])}.</p>`;
+    document.querySelectorAll('[data-h]').forEach(b => b.addEventListener('click', async () => {
+      const st = document.getElementById('fam-silence-status');
+      try {
+        const r = await fetch('/api/family/' + encodeURIComponent(code) + '/settings', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ silenceHours: Number(b.dataset.h) }),
+        });
+        const out = await r.json();
+        if (!r.ok) throw new Error(out.error || 'Could not save');
+        st.textContent = `Saved — the safety text will now send after ${out.silenceHours} hours without a check-in.`;
+        load();
+      } catch (e) { st.textContent = e.message; }
+    }));
+  }catch(e){
+    $c.innerHTML = `<div class="card"><h4>Link not recognised</h4><p class="explain">${esc(e.message)}. Please ask for a fresh family link.</p></div>`;
+  }
+}
+load(); setInterval(load, 60000);
+</script>
+</body>
+</html>

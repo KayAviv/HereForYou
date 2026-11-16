@@ -1,0 +1,117 @@
+/* HereForYou — senior-first styling: very large text, giant touch targets,
+   high contrast, one clear action per area. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 20px; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #fff7ed; color: #1c1917; line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+.hidden { display: none !important; }
+.screen { max-width: 640px; margin: 0 auto; padding: 20px 16px 48px; }
+
+/* ---------- buttons ---------- */
+.btn {
+  font: inherit; font-weight: 700; cursor: pointer; border: 3px solid transparent;
+  border-radius: 18px; padding: 16px 22px; min-height: 64px;
+  background: #f5f5f4; color: #1c1917;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: #e11d48; color: #fff; box-shadow: 0 4px 14px rgba(225,29,72,.3); }
+.btn-big { width: 100%; font-size: 1.15rem; margin-top: 14px; }
+.btn-plain { background: none; color: #44403c; text-decoration: underline; width: 100%; }
+.btn-small { min-height: 48px; padding: 8px 16px; font-size: .9rem; background: #fff; border-color: #d6d3d1; }
+.btn-back { margin-bottom: 14px; background: #fff; border-color: #d6d3d1; }
+.btn-ok {
+  background: #15803d; color: #fff; box-shadow: 0 6px 20px rgba(21,128,61,.35);
+}
+.btn-huge { width: 100%; font-size: 1.7rem; min-height: 110px; border-radius: 24px; margin: 18px 0 8px; }
+.btn-ok.done { background: #65a30d; }
+.btn-mic { background: #e11d48; color: #fff; border-radius: 50%; width: 64px; height: 64px; min-height: 64px; padding: 0; font-size: 1.5rem; flex-shrink: 0; }
+.btn-mic.recording { background: #7f1d1d; animation: pulse 1s infinite; }
+@keyframes pulse { 50% { transform: scale(1.1); } }
+.btn-action { font-size: 1.05rem; min-height: 96px; background: #fff; border-color: #e7e5e4; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+
+/* ---------- auth ---------- */
+.auth-wrap { text-align: center; padding-top: 24px; }
+.logo-circle {
+  width: 96px; height: 96px; margin: 0 auto 12px; border-radius: 50%;
+  background: #ffe4e6; font-size: 3rem; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 18px rgba(225,29,72,.2);
+}
+.app-name { font-size: 2.2rem; color: #9f1239; }
+.tagline { font-size: 1.05rem; color: #44403c; margin: 8px 0 22px; }
+
+/* ---------- cards & forms ---------- */
+.card {
+  background: #fff; border: 2px solid #e7e5e4; border-radius: 20px;
+  padding: 22px; margin: 18px 0; text-align: left; box-shadow: 0 2px 10px rgba(0,0,0,.04);
+}
+.card h4 { font-size: 1.2rem; margin-bottom: 10px; }
+label { display: block; font-weight: 700; margin: 14px 0 6px; font-size: 1rem; }
+input, select, textarea {
+  font: inherit; width: 100%; padding: 15px 16px; border: 2px solid #a8a29e;
+  border-radius: 14px; background: #fff; color: #1c1917;
+}
+input:focus, select:focus, textarea:focus { outline: 3px solid #fda4af; border-color: #e11d48; }
+.error { color: #b91c1c; font-weight: 700; min-height: 1.4em; margin-top: 8px; }
+.explain { font-size: 1.02rem; margin: 8px 0 14px; }
+.family-link { word-break: break-all; font-weight: 700; color: #9f1239; background: #fff1f2; padding: 12px; border-radius: 12px; }
+
+/* ---------- app shell ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 2px solid #e7e5e4;
+  display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;
+}
+.brand { font-size: 1.3rem; font-weight: 800; color: #9f1239; }
+.brand-heart { font-size: 1.3rem; }
+.greeting { font-size: 1.8rem; margin: 10px 0 4px; }
+.status-line { font-size: 1.05rem; color: #44403c; text-align: center; min-height: 1.5em; }
+.section-title { font-size: 1.4rem; margin: 22px 0 12px; }
+
+.banner {
+  border-radius: 16px; padding: 16px 18px; font-size: 1.1rem; font-weight: 700; margin: 12px 0;
+  background: #dbeafe; border: 2px solid #93c5fd; color: #1e3a8a;
+}
+.banner-due { background: #fef3c7; border-color: #f59e0b; color: #78350f; animation: pulse 1.6s infinite; }
+
+.med-card {
+  background: #fff; border: 2px solid #e7e5e4; border-radius: 18px; padding: 18px; margin: 12px 0;
+  display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.med-card .med-name { font-size: 1.3rem; font-weight: 800; }
+.med-card .med-meta { color: #44403c; font-size: 1.05rem; }
+.med-card.due { border-color: #f59e0b; background: #fffbeb; }
+.med-card.missed { border-color: #dc2626; background: #fef2f2; }
+.med-card.taken { border-color: #15803d; background: #f0fdf4; }
+.pill { display: inline-block; padding: 4px 14px; border-radius: 999px; font-weight: 800; font-size: .95rem; }
+.pill-due { background: #f59e0b; color: #fff; }
+.pill-missed { background: #dc2626; color: #fff; }
+.pill-taken { background: #15803d; color: #fff; }
+.pill-later { background: #e7e5e4; color: #44403c; }
+.btn-taken { background: #15803d; color: #fff; font-size: 1.2rem; min-height: 72px; }
+
+.grid-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 26px; }
+.silence-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
+.btn-choice { background: #fff; border-color: #a8a29e; font-size: 1.1rem; min-height: 68px; }
+.btn-choice.selected { background: #9f1239; border-color: #9f1239; color: #fff; }
+
+.row-item {
+  background: #fff; border: 2px solid #e7e5e4; border-radius: 16px; padding: 16px 18px; margin: 10px 0;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.row-item .row-main { font-size: 1.1rem; }
+.row-item .row-sub { color: #44403c; font-size: .98rem; }
+.btn-delete { background: #fef2f2; color: #b91c1c; border-color: #fecaca; min-height: 52px; padding: 8px 16px; }
+.empty-note { color: #44403c; font-size: 1.05rem; padding: 10px 2px; }
+
+/* ---------- chat ---------- */
+.chat-box { display: flex; flex-direction: column; gap: 12px; padding: 6px 0 16px; }
+.msg { max-width: 88%; padding: 15px 18px; border-radius: 20px; font-size: 1.12rem; white-space: pre-wrap; }
+.msg.user { background: #e11d48; color: #fff; align-self: flex-end; border-bottom-right-radius: 6px; }
+.msg.bot { background: #fff; border: 2px solid #e7e5e4; align-self: flex-start; border-bottom-left-radius: 6px; }
+.chat-input { display: flex; gap: 10px; align-items: center; }
+.chat-input input { flex: 1; }
+.chat-input .btn-primary { min-height: 64px; }
+.toggle-line { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-top: 14px; }
+.toggle-line input { width: 28px; height: 28px; }

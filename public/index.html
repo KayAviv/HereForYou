@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#e11d48">
+<title>HereForYou — Always Here For You</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<!-- ============ AUTH ============ -->
+<section id="screen-auth" class="screen">
+  <div class="auth-wrap">
+    <div class="logo-circle">❤️</div>
+    <h1 class="app-name">HereForYou</h1>
+    <p class="tagline">Your friendly companion — medicine reminders, daily check-ins, and family close by.</p>
+    <div class="card">
+      <label for="auth-name" id="label-name">Your name</label>
+      <input id="auth-name" type="text" autocomplete="name" placeholder="e.g. Margaret">
+      <label for="auth-email">Email</label>
+      <input id="auth-email" type="email" autocomplete="email" placeholder="you@example.com">
+      <label for="auth-password">Password</label>
+      <input id="auth-password" type="password" autocomplete="current-password" placeholder="Your password">
+      <p id="auth-error" class="error" role="alert"></p>
+      <button id="btn-auth" class="btn btn-primary btn-big">Create my account</button>
+      <button id="btn-auth-toggle" class="btn btn-plain">I already have an account — sign in</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app" class="hidden">
+  <header class="topbar">
+    <div class="brand"><span class="brand-heart">❤️</span> HereForYou</div>
+    <button id="btn-logout" class="btn btn-small">Sign out</button>
+  </header>
+
+  <!-- HOME -->
+  <section id="screen-home" class="screen">
+    <h2 id="greeting" class="greeting">Hello!</h2>
+
+    <div id="appt-banner" class="banner hidden"></div>
+    <div id="due-banner" class="banner banner-due hidden"></div>
+
+    <button id="btn-checkin" class="btn btn-ok btn-huge">✓ I'm OK</button>
+    <p id="checkin-status" class="status-line"></p>
+
+    <h3 class="section-title">Today's medicines</h3>
+    <div id="today-meds"></div>
+
+    <div class="grid-actions">
+      <button class="btn btn-action" data-nav="chat">💬 Talk to<br>my companion</button>
+      <button class="btn btn-action" data-nav="meds">💊 My<br>medicines</button>
+      <button class="btn btn-action" data-nav="notes">📅 Notes &<br>appointments</button>
+      <button class="btn btn-action" data-nav="family">👨‍👩‍👧 Family &<br>contacts</button>
+    </div>
+  </section>
+
+  <!-- CHAT -->
+  <section id="screen-chat" class="screen hidden">
+    <button class="btn btn-back" data-nav="home">← Back home</button>
+    <h3 class="section-title">Your companion</h3>
+    <div id="chat-box" class="chat-box"></div>
+    <div class="chat-input">
+      <button id="btn-mic" class="btn btn-mic" title="Speak">🎤</button>
+      <input id="chat-text" type="text" placeholder="Type or tap the microphone…" autocomplete="off">
+      <button id="btn-send" class="btn btn-primary">Send</button>
+    </div>
+    <label class="toggle-line"><input type="checkbox" id="chk-speak"> Read replies out loud</label>
+  </section>
+
+  <!-- MEDS -->
+  <section id="screen-meds" class="screen hidden">
+    <button class="btn btn-back" data-nav="home">← Back home</button>
+    <h3 class="section-title">My medicines</h3>
+    <div id="med-list"></div>
+    <div class="card">
+      <h4>Add a medicine</h4>
+      <label>Medicine name</label>
+      <input id="med-name" type="text" placeholder="e.g. Blood Pressure Pill">
+      <label>Dose (optional)</label>
+      <input id="med-dose" type="text" placeholder="e.g. 1 tablet">
+      <label>Times (one or more, like 08:00)</label>
+      <input id="med-times" type="text" placeholder="08:00, 20:00">
+      <p id="med-error" class="error"></p>
+      <button id="btn-med-add" class="btn btn-primary btn-big">Add medicine</button>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section id="screen-notes" class="screen hidden">
+    <button class="btn btn-back" data-nav="home">← Back home</button>
+    <h3 class="section-title">Notes & appointments</h3>
+    <div id="note-list"></div>
+    <div class="card">
+      <h4>Add a note or appointment</h4>
+      <label>Kind</label>
+      <select id="note-kind">
+        <option value="appointment">Appointment</option>
+        <option value="doctor">Doctor note</option>
+      </select>
+      <label>Title</label>
+      <input id="note-title" type="text" placeholder="e.g. Dr. Cohen check-up">
+      <label>Date</label>
+      <input id="note-date" type="date">
+      <label>Time (optional)</label>
+      <input id="note-time" type="time">
+      <label>Details (optional)</label>
+      <textarea id="note-body" rows="3" placeholder="Anything to remember…"></textarea>
+      <p id="note-error" class="error"></p>
+      <button id="btn-note-add" class="btn btn-primary btn-big">Save</button>
+    </div>
+  </section>
+
+  <!-- FAMILY -->
+  <section id="screen-family" class="screen hidden">
+    <button class="btn btn-back" data-nav="home">← Back home</button>
+    <h3 class="section-title">Family & contacts</h3>
+    <p class="explain">If you don't check in or use the app for <b id="silence-explain">24 hours</b>, we will text these people to check up on you.</p>
+    <div class="card">
+      <h4>⏰ Safety check timing</h4>
+      <p class="explain">How long without a check-in before we text your family? Tap to choose. Your family can change this too, from their family link.</p>
+      <div class="silence-choices" id="silence-choices">
+        <button class="btn btn-choice" data-silence="4">4 hours</button>
+        <button class="btn btn-choice" data-silence="12">12 hours</button>
+        <button class="btn btn-choice" data-silence="24">24 hours</button>
+        <button class="btn btn-choice" data-silence="48">48 hours</button>
+      </div>
+      <p id="silence-status" class="status-line" style="text-align:left"></p>
+    </div>
+    <div id="contact-list"></div>
+    <div class="card">
+      <h4>Add a family member or contact</h4>
+      <label>Name</label>
+      <input id="contact-name" type="text" placeholder="e.g. David">
+      <label>Who are they? (optional)</label>
+      <input id="contact-relation" type="text" placeholder="e.g. Son">
+      <label>Mobile phone (for the safety text)</label>
+      <input id="contact-phone" type="tel" placeholder="e.g. +1 555 123 4567">
+      <p id="contact-error" class="error"></p>
+      <button id="btn-contact-add" class="btn btn-primary btn-big">Add contact</button>
+    </div>
+    <div class="card">
+      <h4>Family view link</h4>
+      <p class="explain">Share this private link with family. They can see your check-ins, today's medicines and appointments — nothing else, and they can't change anything.</p>
+      <p id="family-link" class="family-link"></p>
+    </div>
+  </section>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>

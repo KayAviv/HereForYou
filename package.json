@@ -1,0 +1,1 @@
+{"dependencies":{"express":"^4.19.2","pg":"^8.12.0"},"description":"HereForYou — a warm AI companion for older people: medication reminders, daily check-ins, doctor notes, and a family safety net.","engines":{"node":">=18"},"main":"server.js","name":"hereforyou","scripts":{"proof":"node test/proof.mjs","start":"node server.js"},"type":"commonjs","version":"1.0.0"}
